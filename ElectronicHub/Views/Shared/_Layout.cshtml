@@ -1,0 +1,187 @@
+﻿<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronic HUB</title>
+    <link href="~/Content/Resources/css/styles.css" rel="stylesheet" />
+    <link href="~/Content/Resources/css/style3.css" rel="stylesheet" />
+    <script src="~/Content/Font/all.js" crossorigin="anonymous"></script>
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Styles.Render("~/Content/css")
+</head>
+
+@if (Session["username"] == null)
+{
+    @RenderBody()
+}
+else if (Session["role"].ToString() == "1")
+{
+
+    @RenderBody()
+
+}
+else if (Session["role"].ToString() == "2")
+{
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" href="@Url.Action("Load_First_Page", "Login")">Electronic HUB </a>
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href=""><i class="fas fa-bars fa-2xl"></i></button>
+            <!-- Navbar Search-->
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0"></form>
+            <!-- Navbar-->
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a href="@Url.Action("Logout", "Login")" role="button"><i class="fa fa-sign-out fa-2xl "></i></a>
+                </li>
+            </ul>
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <!---Customer(01)-->
+                        <!---StoreKeeper(02)-->
+                        <!---Admin(03)-->
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Action</div>
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLiveDashboard" aria-expanded="false" aria-controls="collapseLiveDashboard">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-bolt"></i></div>
+                                test Jobs
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseLiveDashboard" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    @Html.ActionLink("UI Name", "test Index", "testcontroller", new { area = "" }, new { @class = "nav-link" })
+                                    @Html.ActionLink("UI Name", "test Index", "testcontroller", new { area = "" }, new { @class = "nav-link" })
+                                    @Html.ActionLink("UI Name", "test Index", "testcontroller", new { area = "" }, new { @class = "nav-link" })
+                                    @Html.ActionLink("UI Name", "test Index", "testcontroller", new { area = "" }, new { @class = "nav-link" })
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-house-crack"></i></div>
+                                Data
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    @Html.ActionLink("UI Name", "test Index", "testcontroller", new { area = "" }, new { @class = "nav-link" })
+                                </nav>
+                            </div>
+                            <div class="sb-sidenav-menu-heading">Options</div>
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePagesExportData" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-file-csv"></i></div>
+                                Report
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsePagesExportData" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    @Html.ActionLink("UI Name", "test Index", "testcontroller", new { area = "" }, new { @class = "nav-link" })
+
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDailyPlan" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-file-csv"></i></div>
+                                Daily
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseDailyPlan" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    @Html.ActionLink("UI Name", "test Index", "testcontroller", new { area = "" }, new { @class = "nav-link" })
+                                    @Html.ActionLink("UI Name", "test Index", "testcontroller", new { area = "" }, new { @class = "nav-link" })
+                                </nav>
+                            </div>
+                        </div>
+
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <ol class="breadcrumb mb-4">
+                            @if (Session["name"] != null)
+                            {
+                                <li class="breadcrumb-item active">Hi.. @Session["name"].ToString()</li>
+                            }
+                            else
+                            {
+                                <li class="breadcrumb-item active">Hi..User Please Log Into System..!!</li>
+                            }
+                        </ol>
+                        <div class="col-xl-3 col-md-12">
+                            <div class="row">
+                                <br />
+                                @if (ViewData["Error"] != null)
+                                {
+                                    <div class="alert alert-danger" role="alert">
+                                        <p><strong>Error:</strong> @ViewData["Error"].ToString()</p>
+                                    </div>
+                                }
+                                @if (TempData["Success"] != null)
+                                {
+                                    <div class="alert alert-success" role="alert">
+                                        <p><strong>Success:</strong> @TempData["Success"].ToString()</p>
+                                    </div>
+                                }
+                                <br />
+                                @RenderBody()
+                            </div>
+                        </div>
+                    </div>
+
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; Electronic HUB 2025</div>
+
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+        <script src="~/Scripts/Scripts.js"></script>
+        <script src="~/Scripts/notify.min.js"></script>
+        <script src="~/Scripts/respond.js"></script>
+        <script src="~/Scripts/respond.min.js"></script>
+    </body>
+}
+else if (Session["role"].ToString() == "3")
+{
+
+}
+else
+{
+    @RenderBody()
+}
+</html>
+
+<script>
+    window.addEventListener('DOMContentLoaded', event => {
+        document.body.classList.toggle('sb-sidenav-toggled');
+        // Toggle the side navigation
+        const sidebarToggle = document.body.querySelector('#sidebarToggle');
+        if (sidebarToggle) {
+            // Uncomment Below to persist sidebar toggle between refreshes
+            // if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
+            //     document.body.classList.toggle('sb-sidenav-toggled');
+            // }
+            sidebarToggle.addEventListener('click', event => {
+                event.preventDefault();
+                document.body.classList.toggle('sb-sidenav-toggled');
+                localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
+            });
+        }
+
+    });
+
+    $(document).ready(function () {
+        $(".dropdown-toggle").dropdown();
+    });
+</script>

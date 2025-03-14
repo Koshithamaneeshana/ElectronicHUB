@@ -1,0 +1,114 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+</head>
+<body>
+
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label for="exampleFormControlTextarea">Product Code</label>
+            <input class="form-control" id="Item_Code" />
+        </div>
+        <div class="form-group col-md-4">
+            <label for="exampleFormControlTextarea">Product Name</label>
+            <input class="form-control" id="Item_Name" />
+        </div>
+        <div class="form-group col-md-4">
+            <label for="exampleFormControlTextarea">Quantity</label>
+            <input class="form-control" id="Item_Qty" type="number" />
+        </div>
+        <div class="form-group col-md-4">
+            <label>Price(LKR)</label>
+            <input class="form-control" id="Item_Price" type="number" />
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Photo Main</label>
+                <input class="form-control" id="Item_Picture01" type="file" multiple enctype="multipart/form-data">
+            </div>
+            <div class="form-group col-md-4">
+                <label>Photo 02</label>
+                <input class="form-control" id="Item_Picture02" type="file" multiple enctype="multipart/form-data">
+            </div>
+            <div class="form-group col-md-4">
+                <label>Photo 03</label>
+                <input class="form-control" id="Item_Picture03" type="file" multiple enctype="multipart/form-data">
+            </div>
+            <div class="form-group col-md-4">
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>Stock Limit</label>
+                <input class="form-control" id="Item_Stock_limit" type="number" >
+            </div>
+            <div class="form-group col-md-6">
+                <label>Description</label>
+                <textarea class="form-control" name="Description" id="Item_Description" rows="3"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <button id="Save_Button_Add_Employee" onclick="AddItemData()" class="btn btn-success">Save</button>
+            <button class="btn btn-secondary">Cancel</button>
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4"></div>
+    </div>
+</body>
+</html>
+
+<script src="~/Content/Jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+    function AddItemData() {
+
+        var formData = new FormData();
+
+        formData.append("ItemID", $('#Item_Code').val());
+        formData.append("ItemName", $('#Item_Name').val());
+        formData.append("ItemQuantity", $('#Item_Qty').val());
+        formData.append("Item_Price", $('#Item_Price').val());
+        formData.append("Item_Description", $('#Item_Description').val());
+        formData.append("Item_Stock_limit", $('#Item_Stock_limit').val());
+
+        // Append images correctly
+        var file1 = $('#Item_Picture01')[0].files[0];
+        var file2 = $('#Item_Picture02')[0].files[0];
+        var file3 = $('#Item_Picture03')[0].files[0];
+
+        if (file1) formData.append("ImageFile1", file1);
+        if (file2) formData.append("ImageFile2", file2);
+        if (file3) formData.append("ImageFile3", file3);
+
+        $.ajax({
+            type: "POST",
+            url: "/StoreHandler/AddItemData",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    location.reload();
+                } else {
+                    alert("Error: " + response.message);
+                }
+            },
+            error: function () {
+                alert("Error while saving data.");
+            }
+        });
+    }
+
+</script>

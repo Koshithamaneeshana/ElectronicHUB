@@ -1,0 +1,109 @@
+﻿
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+
+</head>
+<body>
+
+    <style>
+        table {
+            width: 100%; /* Optional */
+            border-collapse: collapse; /* Optional for cleaner table */
+        }
+
+        th, td {
+            text-align: center;
+            vertical-align: middle; /* Ensures text is vertically centered */
+            padding: 8px; /* Adds padding for better spacing */
+        }
+    </style>
+
+    <div>
+        <div class="col-md-12">
+            <div>
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Products Data</h3>
+                        <input type="text" class="form-control pull-right" id="dev-table-filter" data-action="filter" data-filters="#table_Products_Data" placeholder="Filter" />
+                    </div>
+                    <table class="table table-hover" id="table_Products_Data">
+                        <thead>
+                            <tr>
+                                <th class="center">Item ID</th>
+                                <th class="center">Item Name</th>
+                                <th class="center">Stock Quantity</th>
+                                <th class="center">Unit Price</th>
+                                <th class="center">Description</th>
+                                <th class="center">Stock Limt</th>
+                                <th class="center">Picture 01</th>
+                                <th class="center">Picture 02</th>
+                                <th class="center">Picture 03</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <br /><br />
+</body>
+
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+
+    GetAll_Employee_Load();
+
+    function GetAll_Employee_Load() {
+        $.ajax({
+            type: "GET",
+            url: '/StoreHandler/GetAll_Products_Load',
+            success: function (ProductsList) {
+                $("#table_Products_Data tbody").empty();
+                var SetData = $("#table_Products_Data tbody");
+                for (var i = 0; i < ProductsList.length; i++) {
+                    var Data = "<tr class='row_" + ProductsList[i].ID + "'>" +
+                        "<td>" + ProductsList[i].ItemID + "</td>" +
+                        "<td>" + ProductsList[i].ItemName + "</td>" +
+                        "<td>" + ProductsList[i].ItemQuantity + "</td>" +
+                        "<td>" + ProductsList[i].Item_Price + "</td>" +
+                        "<td>" + ProductsList[i].Item_Description + "</td>" +
+                        "<td>" + ProductsList[i].Item_Stock_limit + "</td>" +
+                        "<td>" + (ProductsList[i].Item_Image1 ? "<img src='" + ProductsList[i].Item_Image1 + "' width='80' height='80' style='border-radius: 5px;' />" : "No Image") + "</td>" +
+                        "<td>" + (ProductsList[i].Item_Image2 ? "<img src='" + ProductsList[i].Item_Image2 + "' width='80' height='80' style='border-radius: 5px;' />" : "No Image") + "</td>" +
+                        "<td>" + (ProductsList[i].Item_Image3 ? "<img src='" + ProductsList[i].Item_Image3 + "' width='80' height='80' style='border-radius: 5px;' />" : "No Image") + "</td>" +
+                        "<td class='center'>" + "<a href='#' class='btn btn-warning' data-toggle='modal' data-target='#Modal_BreakDown_feedback' onclick='Edit_Feedback_BreakDown(" + ProductsList[i].ID + ")' ><span class='glyphicon glyphicon-edit'></span> Update </a>" + "</td>" +
+                        "</tr>";
+
+                    SetData.append(Data);
+                }
+            },
+            error: function (error) {
+                $.notify(error);
+            }
+        });
+    }
+
+
+
+</script>
+
+
+@*<img id="itemImage" src="" style="width:200px;height:auto;" />
+
+<script>
+    $(document).ready(function () {
+        var itemId = $('#Item_Code').val();
+        $("#itemImage").attr("src", "/StoreHandler/GetImage?itemId=" + itemId);
+    });
+</script>*@

@@ -1,0 +1,466 @@
+﻿body,
+html {
+    margin: 0;
+    color: #585858;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+textarea {
+    max-width: 300px;
+}
+
+/* reset code */
+
+* {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/*  wrapper */
+.wrapper {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (min-width: 576px) {
+    .wrapper {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .wrapper {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .wrapper {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .wrapper {
+        max-width: 1140px;
+    }
+}
+
+/*  /wrapper */
+
+.d-grid {
+    display: grid;
+}
+
+button,
+input {
+    -webkit-appearance: none;
+    outline: none;
+}
+
+button,
+.btn,
+select {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+}
+
+
+.w3l-login {
+    position: relative;
+    height: 100vh;
+    background: url('../Resources/a.jpg') no-repeat;
+    background-size: cover;
+}
+
+.logo {
+    text-align: center;
+}
+
+a.brand-logo {
+    color: #000000;
+    color: #fff;
+    font-size: 42px;
+}
+
+.w3l-login .overlay {
+    background: linear-gradient(to right, rgba(29, 75, 174, 0.38), rgba(79, 219, 146, 0.44));
+    display: grid;
+    padding: 5px 0px;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.w3l-login .form-section {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 2rem 3rem;
+    border-radius: 4px;
+    box-shadow: 0px 9px 24px 5px rgba(0, 0, 0, 0.04);
+    background: #fff;
+}
+
+    .w3l-login .form-section h3 {
+        font-size: 30px;
+        line-height: 20px;
+        color: #090909;
+        text-align: center;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .w3l-login .form-section h6 {
+        font-size: 15px;
+        color: #5a5a5a;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+.w3l-login .form-input input[type="password"],
+.w3l-login .form-input input[type="text"] {
+    background: #fff;
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+    color: #000;
+    -webkit-appearance: none;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    text-align: center;
+}
+
+    .w3l-login .form-input input[type="password"]:focus,
+    .w3l-login .form-input input[type="text"]:focus {
+        background: #fff;
+        color: #090909;
+        border: 1px solid #00d679;
+        border-radius: 4px;
+        align-items: center;
+    }
+
+.w3l-login .form-input {
+    margin: 10px 31px 10px 31px;
+    background: rgba(249, 250, 255, 0.09);
+    display: grid;
+    align-items: center;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+}
+
+
+.w3l-login .continue {
+    position: relative;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+}
+
+.w3l-login button.btn {
+    opacity: 0.8;
+    width: 280px;
+}
+
+    .w3l-login button.btn:hover {
+        opacity: 1;
+    }
+
+.theme-button {
+    transition: 0.3s ease-out;
+    display: inline-block;
+    line-height: 50px;
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0px;
+    padding: 0px 30px;
+    text-transform: uppercase;
+    border: none;
+    background-color: #00d679;
+    color: #fff;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+.center {
+    text-align: center;
+}
+
+.tableHeader {
+    background-color: #d9534f;
+    font-size: 16px;
+    font-style: italic;
+    color: white;
+}
+/*the container must be positioned relative:*/
+.custom-select {
+    position: relative;
+    font-family: Arial;
+}
+
+    .custom-select select {
+        display: none; /*hide original SELECT element:*/
+    }
+
+.select-selected {
+    background-color: #4fdb92;
+}
+
+    /*style the arrow inside the select element:*/
+    .select-selected:after {
+        position: absolute;
+        content: "";
+        top: 18px;
+        right: 50px; /*****************************************************************************************/
+        width: 0;
+        height: 0;
+        border: 6px solid transparent;
+        border-color: #fff transparent transparent transparent;
+        margin-left: 31px;
+        margin-right: 31px;
+    }
+
+    /*point the arrow upwards when the select box is open (active):*/
+    .select-selected.select-arrow-active:after {
+        border-color: transparent transparent #fff transparent;
+        top: 8px;
+    }
+
+/*style the items (options), including the selected item:*/
+.select-items div, .select-selected {
+    color: #ffffff;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 4px;
+    line-height: 20px;
+    margin-left: 31px;
+    margin-right: 31px;
+}
+
+/*style items (options):*/
+.select-items {
+    position: absolute;
+    background-color: #4fdb92;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    margin-left: 31px;
+    margin-right: 31px;
+}
+
+/*hide the items when the select box is closed:*/
+.select-hide {
+    display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.serif {
+    font-family: "Times New Roman", Times, serif;
+}
+
+
+/********************Supervisor dashboard css start********************/
+.btn-select {
+    position: relative;
+    padding: 0;
+    min-width: 236px;
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+    .btn-select .btn-select-value {
+        padding: 6px 12px;
+        display: block;
+        position: absolute;
+        left: 0;
+        right: 34px;
+        text-align: center;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        border-top: none !important;
+        border-bottom: none !important;
+        border-left: none !important;
+    }
+
+    .btn-select .btn-select-arrow {
+        float: right;
+        line-height: 20px;
+        padding: 6px 10px;
+        top: 0;
+    }
+
+    .btn-select ul {
+        display: none;
+        background-color: linen;
+        color: black;
+        clear: both;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border-top: none !important;
+        position: absolute;
+        left: -1px;
+        right: -1px;
+        top: 33px;
+        z-index: 999;
+        border-radius: 4px;
+    }
+
+        .btn-select ul li {
+            padding: 3px 6px;
+            text-align: center;
+        }
+
+            .btn-select ul li:hover {
+                background-color: #d9534f;
+            }
+
+            .btn-select ul li.selected {
+                color: white;
+            }
+
+    .btn-select.btn-select-light .btn-select-value {
+        background-color: white;
+        color: black;
+    }
+
+    /* danger Start */
+    .btn-select.btn-danger:hover, .btn-select.btn-danger:active, .btn-select.btn-danger.active {
+        border-color: #d43f3a;
+    }
+
+    .btn-select.btn-danger ul li.selected {
+        background-color: #d43f3a;
+        color: white;
+    }
+
+    .btn-select.btn-danger ul {
+        border: #d43f3a 1px solid;
+    }
+
+    .btn-select.btn-danger .btn-select-value {
+        background-color: #d9534f;
+        border: #d43f3a 1px solid;
+    }
+
+    .btn-select.btn-danger:hover, .btn-select.btn-danger.active {
+        background-color: #c9302c;
+    }
+/* danger End */
+/********************Supervisor dashboard css end********************/
+
+input[type=text] {
+    background: #fff;
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+    color: #000;
+    -webkit-appearance: none;
+    border: 2px solid #6e6e6e;
+    border-radius: 4px;
+    text-align: center;
+}
+
+    input[type=text]:focus {
+        background: #fff;
+        color: #090909;
+        border: 2px solid #d9534f;
+        border-radius: 4px;
+        align-items: center;
+    }
+
+.outline {
+    border: 2px solid #d9534f;
+    margin: auto;
+    padding: 40px 0px 20px 0px;
+    text-align: center;
+}
+
+
+ul.nav.nav-tabs {
+    margin: 10px 0px;
+}
+
+    ul.nav.nav-tabs li:not(.active) a {
+        background-color: #eeeeee;
+        color: grey;
+    }
+
+    ul.nav.nav-tabs li.active a {
+        border-top: 3px solid #16a765;
+    }
+
+
+.loaderbody {
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    background-color: rgba(128,128,128,0.2);
+    z-index: 2147483647;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    position: fixed;
+    top: 45%;
+    
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,164 @@
+﻿@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+@{
+    ViewBag.Title = "Electronic Hub";
+}
+
+@{ Layout = null; }
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronics HUB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .w3l-login {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .w3l-login .overlay {
+            background: linear-gradient(to right, #0a0f29, #162447); /* Dark tech gradient */
+            display: grid;
+            align-items: center;
+            padding: 5px 0;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Circuit Pattern */
+        .w3l-login::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('circuit-pattern.png'); /* Replace with actual circuit pattern */
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        /* Style for electronic components */
+        .component {
+            position: absolute;
+            width: 30px; /* Smaller component size */
+            height: 30px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0;
+            user-select: none;
+            animation: fadeInOut 3s linear infinite, moveAround 4s infinite ease-in-out alternate;
+        }
+
+        /* Fade-in and fade-out animation */
+        @@keyframes fadeInOut {
+            0% { opacity: 0; transform: scale(0.5); }
+            10% { opacity: 1; transform: scale(1); }
+            90% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+
+        /* Random movement animation */
+        @@keyframes moveAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(40px, 60px) rotate(15deg); }
+            50% { transform: translate(-50px, -40px) rotate(-10deg); }
+            75% { transform: translate(60px, -30px) rotate(20deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+    </style>
+</head>
+
+<body>
+    @using (Html.BeginForm("Login", "Login", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="w3l-login">
+            <div class="overlay">
+                <div class="wrapper">
+                    <div class="logo">
+                        <h1 style="color:aliceblue; font-size:42px;">Electronic HUB</h1>
+                    </div>
+                    <div class="form-section" style="background: linear-gradient(to right, #0a0f29, #162447);">
+                        <div class="logo">
+                            <img class="brand-logo" src="" />
+
+                            <form action="#" method="post" class="signin-form">
+                                <div class="form-input">
+                                    <input type="text" name="Username" placeholder="Username" required="" autofocus>
+                                </div>
+
+                                <div class="form-input">
+                                    <input type="password" name="Password" placeholder="Password" required="">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary theme-button mt-4">Log in</button> <br />
+                                <button class="btn btn-success theme-button mt-4" onclick="">Sign up</button><br />
+                                @Html.Raw(TempData["errorMsg"])
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+        <script>
+            const overlay = document.querySelector('.overlay');
+
+            // Array of electronic component images (Replace with actual paths)
+            const componentImages = [
+                '@Url.Content("~/Resources/cap1.png")',
+                '@Url.Content("~/Resources/cap2.png")',
+                '@Url.Content("~/Resources/cap3.png")',
+                '@Url.Content("~/Resources/cap4.png")',
+                '@Url.Content("~/Resources/cap5.png")',
+                '@Url.Content("~/Resources/cap6.png")',
+                '@Url.Content("~/Resources/cap7.png")',
+                '@Url.Content("~/Resources/cap8.png")',
+                '@Url.Content("~/Resources/cap9.png")',
+                '@Url.Content("~/Resources/cap10.png")'
+           
+            ];
+
+
+            function createComponent() {
+                if (document.querySelectorAll('.component').length >= 50) return; // Limit max components on screen
+
+                let component = document.createElement("div");
+                component.classList.add("component");
+                component.style.left = `${Math.random() * window.innerWidth}px`;
+                component.style.top = `${Math.random() * window.innerHeight}px`;
+                component.style.backgroundImage = `url(${componentImages[Math.floor(Math.random() * componentImages.length)]})`;
+                component.style.animationDelay = `${Math.random() * 1.5}s`; // Random delay
+                overlay.appendChild(component);
+
+                // Remove the component after animation completes
+                setTimeout(() => {
+                    component.remove();
+                }, 5000); // Matches fadeInOut animation time
+            }
+
+            // Create new components rapidly
+            setInterval(() => {
+                createComponent();
+            }, 300); // Spawn new component every 300ms
+
+        </script>
+
+
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+
+</body>
+</html>
