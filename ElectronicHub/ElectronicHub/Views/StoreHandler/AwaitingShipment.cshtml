@@ -1,0 +1,129 @@
+﻿
+<div class="row">
+    <div class="col-xl-3 col-md-3">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body" style="font-size:18px">Store Products <span id="Shedule_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="@Url.Action("Index", "StoreHandler")">View</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-3">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-body" style="font-size:18px">Awaiting Shipments <span id="Fabrication_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="@Url.Action("AwaitingShipment", "StoreHandler")">View</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-3">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-body" style="font-size:18px">Shipped Orders <span id="Preventive_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="@Url.Action("Preventive_Line_Sup", "LineSupervisor")">View</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-3">
+        <div class="card bg-danger text-white mb-4">
+            <div class="card-body" style="font-size:18px">Customer Messages<span id="BreakeDown_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span> </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="@Url.Action("BreakDownLineSup", "LineSupervisor")">View</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#firstTab">Pending Orders COD</a></li>
+    <li><a data-toggle="tab" href="#secondTab">Pending Orders Fully Paid</a></li>
+</ul>
+<div class="tab-content">
+    <div id="firstTab" class="tab-pane fade in active">@Html.Action("AwaitingShipment_COD")</div>
+    <div id="secondTab" class="tab-pane fade in">@Html.Action("AwaitingShipment_Paypal")</div>
+</div>
+
+
+<script src="~/Content/Jquery/3.5.1/jquery.min.js"></script>
+@*<script>
+        //$(document).ready(function () {
+        //    //Get Count Breakdown Pending Count By Line
+        //    $.ajax({
+        //        type: 'POST',
+        //        url: '/Notification_Handler/Breakdown_Pending_Count_By_Line',
+        //        data: '{}',
+        //        contentType: 'application/json; charset=utf-8',
+        //        dataType: 'json',
+
+        //        success: function (jsonData) {
+        //            document.getElementById('BreakeDown_Count_In_Line_Sup_Main_Index').innerHTML = jsonData;
+
+        //        },
+        //        failure: function (r) {
+        //            alert(r);
+        //        },
+        //        error: function (r) {
+        //            alert(r);
+        //        }
+        //    });
+        //    $.ajax({
+        //        type: 'POST',
+        //        url: '/Notification_Handler/Fabrication_Pending_Count_By_Line',
+        //        data: '{}',
+        //        contentType: 'application/json; charset=utf-8',
+        //        dataType: 'json',
+
+        //        success: function (jsonData) {
+        //            document.getElementById('Fabrication_Count_In_Line_Sup_Main_Index').innerHTML = jsonData;
+
+        //        },
+        //        failure: function (r) {
+        //            alert(r);
+        //        },
+        //        error: function (r) {
+        //            alert(r);
+        //        }
+        //    });
+        //    $.ajax({
+        //        type: 'POST',
+        //        url: '/Notification_Handler/Shedule_Pending_Count_By_Line',
+        //        data: '{}',
+        //        contentType: 'application/json; charset=utf-8',
+        //        dataType: 'json',
+
+        //        success: function (jsonData) {
+        //            document.getElementById('Shedule_Count_In_Line_Sup_Main_Index').innerHTML = jsonData;
+
+        //        },
+        //        failure: function (r) {
+        //            alert(r);
+        //        },
+        //        error: function (r) {
+        //            alert(r);
+        //        }
+        //    });
+        //    $.ajax({
+        //        type: 'POST',
+        //        url: '/Notification_Handler/Preventive_Pending_Count_By_Line',
+        //        data: '{}',
+        //        contentType: 'application/json; charset=utf-8',
+        //        dataType: 'json',
+
+        //        success: function (jsonData) {
+        //            document.getElementById('Preventive_Count_In_Line_Sup_Main_Index').innerHTML = jsonData;
+
+        //        },
+        //        failure: function (r) {
+        //            alert(r);
+        //        },
+        //        error: function (r) {
+        //            alert(r);
+        //        }
+        //    });
+        //});
+
+    </script>*@
+
