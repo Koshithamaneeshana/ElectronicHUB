@@ -46,7 +46,7 @@
 <body>
     <div class="container-lg">
         <nav class="navbar navbar-expand-lg" style="background: linear-gradient(to right, #0a0f29, #162447);">
-            <a class="navbar-brand text-white" href="#">Electronic HUB</a>
+            <a class="navbar-brand text-white" href="@Url.Action("Index", "Customer")">Electronic HUB</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
@@ -107,6 +107,7 @@
                 <tr>
                     <th>Image</th>
                     <th>Name</th>
+                    <th>Stock</th>
                     <th>Unit Price</th>
                     <th>Quantity</th>
                     <th>Total</th>
@@ -156,10 +157,12 @@
                     <label class="form-label">Email Address *</label>
                     <input type="email" class="form-control" id="email" required>
                 </div>
+                <br />
+                <div id="error-message"></div>
             </form>
         </div>
 
-            <!-- Order Summary -->
+        <!-- Order Summary -->
         <div class="col-md-6">
             <h5 class="mb-3"><i class="fas fa-receipt"></i> Order Summary</h5>
             <div class="order-summary border p-3 rounded shadow-sm bg-light">
@@ -167,16 +170,16 @@
 
                 <div class="d-flex justify-content-between">
                     <span><i class="fas fa-shipping-fast"></i> Shipping:</span>
-                    <span class="fw-bold text-success">Free</span>
+                    <span id="shipping-cost" class="fw-bold text-success">Free</span>
                 </div>
                 <div class="d-flex justify-content-between">
                     <span><i class="fas fa-calculator"></i> Estimated Tax:</span>
-                    <span class="fw-bold">$0.00</span>
+                    <span class="fw-bold">Rs.0.00</span>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between">
                     <h5 class="fw-bold text-danger">Total:</h5>
-                    <h5 id="total-price" class="fw-bold text-danger">$0.00</h5>
+                    <h5 id="total-price" class="fw-bold text-danger">Rs.0.00</h5>
                 </div>
             </div>
             <div class="payment-container">
@@ -199,191 +202,538 @@
                 </div>
             </div>
             <br />
-            <button type="submit" class="btn btn-primary w-100 mt-3">Place Order</button>
+            <button id="placeOrderBtn" onclick="placeOrder()" class="btn btn-primary w-100 mt-3" disabled>
+                <i class="fas fa-lock"></i> Place Order
+            </button>
         </div>
     </div>
 </div>
+@*<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="cart-items-checkout-test">
+        <tr data-id="1234">
+            <td class="cart-item-name">Item 1</td>
+            <td class="cart-item-price">Rs.100</td>
+            <td class="cart-item-quantity"><span>2</span></td>
+        </tr>
+        <tr data-id="5678">
+            <td class="cart-item-name">Item 2</td>
+            <td class="cart-item-price">Rs.200</td>
+            <td class="cart-item-quantity"><span>1</span></td>
+        </tr>
+    </tbody>
+    </table>*@
 
-<script src="~/Content/Jquery/3.5.1/jquery.min.js"></script>
 
-<script>
-    $(document).ready(function () {
-        updateCartCount();
-        loadCart();
-    });
+    @*<button id="extractButton" onclick="extractCartItems()" class="btn btn-primary">Extract Cart Items</button>*@
+    <script src="~/Content/Jquery/3.5.1/jquery.min.js"></script>
 
-    // Ensure only one payment method is selected
-    function togglePayment(method) {
-        if (method === 'cod') {
-            document.getElementById('paypal').checked = false;
-        } else {
-            document.getElementById('cashOnDelivery').checked = false;
-        }
-    }
-    // Load Cart Data from DB or Local Storage
-    function loadCart() {
-        $.ajax({
-            url: "/Customer/GetCartItems",
-            method: "GET",
-            success: function (response) {
-                if (response.sessionAvailable) {
-                    renderCart(response.data);
+    <script>
+        $(document).ready(function () {
+            updateCartCount();
+            loadCart();
+        });
+
+
+        //function togglePayment(method) {
+        //    let baseTotal = parseFloat(document.getElementById("total-price").getAttribute("data-base-price"));
+        //    let totalPriceElement = document.getElementById("total-price");
+        //    let shippingCostElement = document.getElementById("shipping-cost");
+        //    let placeOrderBtn = document.getElementById("placeOrderBtn");
+        //    let errorMessageDiv = document.getElementById("error-message");
+
+        //    let newTotal = baseTotal; // Reset total price
+
+        //    if (method === "cod") {
+        //        newTotal += 400;
+        //        shippingCostElement.innerHTML = "<span class='fw-bold text-danger'>Rs.400</span>"; // Update shipping cost
+        //    } else if (method === "paypal") {
+        //        newTotal += 350;
+        //        shippingCostElement.innerHTML = "<span class='fw-bold text-success'>Free</span>"; // Keep shipping free
+        //    }
+
+        //    // Update total price
+        //    totalPriceElement.innerHTML = `Rs.${newTotal.toFixed(2)}`;
+
+        //    // Validate form fields before enabling the button
+        //    let requiredFields = ["first-name", "last-name", "street-address", "city", "postal-code", "email"];
+        //    let isValid = true;
+        //    let errorMessage = "<strong>Please fill out the required fields:</strong><ul class='mb-0'>";
+
+        //    requiredFields.forEach(function (field) {
+        //        let input = document.getElementById(field);
+        //        if (!input.value.trim()) {
+        //            isValid = false;
+        //            errorMessage += `<li>${input.previousElementSibling.innerText}</li>`;
+        //            input.classList.add("is-invalid"); // Highlight empty fields
+        //        } else {
+        //            input.classList.remove("is-invalid");
+        //        }
+        //    });
+
+        //    if (isValid) {
+        //        // Hide the error message if validation passes
+        //        errorMessageDiv.innerHTML = "";
+        //        errorMessageDiv.style.display = "none";
+
+        //        // Enable the Place Order button and remove lock icon
+        //        placeOrderBtn.removeAttribute("disabled");
+        //        placeOrderBtn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+        //    } else {
+        //        // Show the beautiful Bootstrap alert message
+        //        errorMessage += "</ul>";
+        //        errorMessageDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        //                                    ${errorMessage}
+        //                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        //                                </div>`;
+        //        errorMessageDiv.style.display = "block";
+
+        //        // Disable the button and add lock icon
+        //        placeOrderBtn.setAttribute("disabled", "true");
+        //        placeOrderBtn.innerHTML = '<i class="fas fa-lock"></i> Place Order';
+        //    }
+        //}
+
+        function togglePayment(method) {
+
+            let baseTotal = parseFloat(document.getElementById("total-price").getAttribute("data-base-price"));
+
+            alert(baseTotal)
+            let totalPriceElement = document.getElementById("total-price");
+            let shippingCostElement = document.getElementById("shipping-cost");
+            let placeOrderBtn = document.getElementById("placeOrderBtn");
+            let errorMessageDiv = document.getElementById("error-message");
+
+            let newTotal = baseTotal; // Reset total price
+
+            if (method === "cod") {
+                newTotal += 400;
+                shippingCostElement.innerHTML = "<span class='fw-bold text-danger'>Rs.400</span>"; // Update shipping cost
+            } else if (method === "paypal") {
+                newTotal += 350;
+                shippingCostElement.innerHTML = "<span class='fw-bold text-success'>Free</span>"; // Keep shipping free
+            }
+
+            // Update total price
+            totalPriceElement.innerHTML = `Rs.${newTotal.toFixed(2)}`;
+
+            // Validate form fields before enabling the button
+            let requiredFields = ["first-name", "last-name", "street-address", "city", "postal-code", "email"];
+            let isValid = true;
+            let errorMessage = "<strong>Please fill out the required fields:</strong><ul class='mb-0'>";
+
+            requiredFields.forEach(function (field) {
+                let input = document.getElementById(field);
+                if (!input.value.trim()) {
+                    isValid = false;
+                    errorMessage += `<li>${input.previousElementSibling.innerText}</li>`;
+                    input.classList.add("is-invalid"); // Highlight empty fields
                 } else {
-                    // Load from localStorage
-                    let localCart = JSON.parse(localStorage.getItem("cart")) || [];
+                    input.classList.remove("is-invalid");
+                }
+            });
 
-                    if (localCart.length > 0) {
-                        // Fetch images for localStorage items using ItemID
-                        let itemIds = localCart.map(item => item.ItemID);
+            if (isValid) {
+                // Hide the error message if validation passes
+                errorMessageDiv.innerHTML = "";
+                errorMessageDiv.style.display = "none";
 
-                        $.post("/Customer/GetImagesForItems", { itemIds: itemIds })
-                            .done(function (imageResponse) {
+                // Enable the Place Order button and remove lock icon
+                placeOrderBtn.removeAttribute("disabled");
+                placeOrderBtn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+            } else {
+                // Show a confirmation message for login or guest checkout
+                let userChoice = confirm(`⚠️ You have not logged into the system.
+                                            If you already have an account, do you want to go to the Sign-In page?
+                                            If you don't have an account, do you wish to place an order as a guest?
+                                            Your billing details will be saved as account details.`);
 
-                                localCart.forEach(item => {
+                if (userChoice) {
+                    window.location.href = "/login"; // Redirect to login page
+                    return;
+                }
 
-                                    // Convert both to string for safe comparison
-                                    let matchedImage = imageResponse.find(img => String(img.ItemID) === String(item.ItemID));
+                // Show the validation message if they choose guest checkout
+                errorMessage += "</ul>";
+                errorMessageDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    ${errorMessage}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>`;
+                errorMessageDiv.style.display = "block";
 
-                                    if (matchedImage) {
-                                        item.Item_Image1 = matchedImage.Item_Image1; // Assign image correctly
-                                    } else {
-                                        console.warn("No image found for ItemID:", item.ItemID);
-                                        item.Item_Image1 = "default.jpg"; // Fallback image
-                                    }
+                // Disable the button and add lock icon
+                placeOrderBtn.setAttribute("disabled", "true");
+                placeOrderBtn.innerHTML = '<i class="fas fa-lock"></i> Place Order';
+            }
+        }
+
+
+
+        function updateTotalPrice() {
+
+            let totalPriceElement = document.getElementById("total-price");
+          
+            if (totalPriceElement) {
+
+                let priceText = totalPriceElement.textContent.trim();
+
+
+                if (priceText === "Rs.0.00" || priceText === "Rs. 0.00" || priceText === "0.00") {
+                    console.warn("⚠️ Price not updated yet! Retrying...");
+                    setTimeout(updateTotalPrice, 500); // Retry after 500ms
+                    return;
+                }
+
+                // Remove "Rs." and extra spaces, then extract correct decimal value
+                let cleanedPrice = priceText.replace(/[^0-9.]/g, ''); // Keep only numbers and '.'
+
+                // Ensure only the first decimal point remains
+                let finalPrice = parseFloat(priceText.replace("Rs.", ""))
+                //let finalPrice = cleanedPrice.replace(/(\..*)\./g, '$1'); // Removes extra decimals if present
+
+                let basePrice = parseFloat(finalPrice) || 0;
+
+                //console.log("🔍 Raw Price Text:", priceText);
+                //console.log("✅ Corrected Extracted Price:", finalPrice);
+
+                // Store the extracted value
+                totalPriceElement.setAttribute("data-base-price", finalPrice);
+            }
+        }
+
+        // Run after the page loads
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(updateTotalPrice, 500);
+        });
+
+
+
+        // Load Cart Data from DB or Local Storage
+        function loadCart() {
+            $.ajax({
+                url: "/Customer/GetCartItems",
+                method: "GET",
+                success: function (response) {
+                    if (response.sessionAvailable) {
+                        renderCart(response.data);
+                    } else {
+                        // Load from localStorage
+                        let localCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+                        if (localCart.length > 0) {
+                            // Fetch images for localStorage items using ItemID
+                            let itemIds = localCart.map(item => item.ItemID);
+
+                            $.post("/Customer/GetImagesForItems", { itemIds: itemIds })
+                                .done(function (imageResponse) {
+
+                                    localCart.forEach(item => {
+
+                                        // Convert both to string for safe comparison
+                                        let matchedImage = imageResponse.find(img => String(img.ItemID) === String(item.ItemID));
+
+                                        if (matchedImage) {
+                                            item.Item_Image1 = matchedImage.Item_Image1; // Assign image correctly
+                                        } else {
+                                            console.warn("No image found for ItemID:", item.ItemID);
+                                            item.Item_Image1 = "default.jpg"; // Fallback image
+                                        }
+                                    });
+
+                                    console.log("Final Cart Data Before Render:", localCart); // Check before rendering
+
+                                    renderCart(localCart);
+                                })
+                                .fail(function (xhr, status, error) {
+                                    console.error("AJAX Request Failed:", status, error);
                                 });
 
-                                console.log("Final Cart Data Before Render:", localCart); // Check before rendering
+                        } else {
 
-                                renderCart(localCart);
-                            })
-                            .fail(function (xhr, status, error) {
-                                console.error("AJAX Request Failed:", status, error);
-                            });
-
-                    } else {
-
-                        renderCart([]);
+                            renderCart([]);
+                        }
                     }
                 }
-            }
-        });
-    }
+            });
+        }
 
-    // Render Cart Items
-    function renderCart(cartItems) {
-        let cartTable = $("#cart-items-checkout");
-        cartTable.empty();
-        let subtotal = 0;
+        // Render Cart Items
+        function renderCart(cartItems) {
+            let cartTable = $("#cart-items-checkout");
+            cartTable.empty();
+            let subtotal = 0;
 
-        cartItems.forEach(item => {
-            let itemTotal = item.Item_Price * item.ItemQuantity;
-            subtotal += itemTotal;
-            cartTable.append(`
+            cartItems.forEach(item => {
+                let itemTotal = item.Item_Price * item.ItemQuantity;
+                subtotal += itemTotal;
+                cartTable.append(`
                 <tr data-id="${item.ItemID}">
                     <td><img src="${item.Item_Image1}" width="80" height="80" ></td>
-                    <td>${item.ItemName}</td>
-                    <td>Rs.${item.Item_Price}</td>
-                    <td>
+                    <td class="cart-item-name" >${item.ItemName}</td>
+                    <td data-stock="${item.StockQuantity}">${item.StockQuantity}</td>
+                    <td class="cart-item-price" >Rs.${item.Item_Price}</td>
+                    <td class="cart-item-quantity" >
                         <button class="btn btn-sm btn-light decrease">-</button>
-                        <span class="px-2">${item.ItemQuantity}</span>
+                        <span class="px-2" data-ItemQuantity="${item.ItemQuantity}">${item.ItemQuantity}</span>
                         <button class="btn btn-sm btn-light increase">+</button>
                     </td>
-                    <td>Rs.${itemTotal.toFixed(2)}</td>
+                    <td>Rs.${itemTotal.toFixed(2) }</td>
                     <td><button class="btn btn-danger btn-sm remove-item">X</button></td>
                 </tr>
             `);
-        });
+            });
 
-        $("#cart-subtotal").text(`Rs.${subtotal.toFixed(2)}`);
-        $("#total-price").text(`Rs.${subtotal.toFixed(2)}`);
-        $("#cart-count").text(cartItems.length);
-    }
+            $("#cart-subtotal").text(`Rs.${subtotal.toFixed(2)}`);
+            $("#total-price").text(`Rs.${subtotal.toFixed(2)}`);
+            $("#cart-count").text(cartItems.length);
+        }
 
         // Increase Quantity
-    $(document).on("click", ".increase", function () {
-        updateQuantity($(this).closest("tr").data("id"), 1);
-    });
+        $(document).on("click", ".increase", function () {
+            updateQuantity($(this).closest("tr").data("id"), 1);
+           Reset_Payement_Method();
+        });
 
-    // Decrease Quantity
-    $(document).on("click", ".decrease", function () {
-        updateQuantity($(this).closest("tr").data("id"), -1);
-    });
+        // Decrease Quantity
+        $(document).on("click", ".decrease", function () {
+            updateQuantity($(this).closest("tr").data("id"), -1);
+            Reset_Payement_Method();
+        });
 
-    // Remove Item
-    $(document).on("click", ".remove-item", function () {
-        removeFromCart($(this).closest("tr").data("id"));
-    });
+        // Remove Item
+        $(document).on("click", ".remove-item", function () {
+            removeFromCart($(this).closest("tr").data("id"));
+            Reset_Payement_Method();
+        });
 
 
-    function updateQuantity(itemId, change) {
-        $.ajax({
-            url: "/Customer/UpdateQuantity",
-            method: "POST",
-            data: { ItemID: itemId, Change: change },
-            success: function (response) {
-                if (!response.sessionAvailable) {
-                    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-                    let item = cart.find(p => String(p.ItemID) === String(itemId));
+        function updateQuantity(itemId, change) {
+            $.ajax({
+                url: "/Customer/UpdateQuantity",
+                method: "POST",
+                data: { ItemID: itemId, Change: change },
+                success: function (response) {
+                    if (!response.sessionAvailable) {
+                        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+                        let item = cart.find(p => String(p.ItemID) === String(itemId));
 
-                    if (item) {
-                        item.ItemQuantity += change; // Ensure correct property name
+                        if (item) {
+                            //item.ItemQuantity += change; // Ensure correct property name
 
-                        if (item.ItemQuantity <= 0) {
-                            cart = cart.filter(p => String(p.ItemID) !== String(itemId));
+                            //if (item.ItemQuantity <= 0) {
+                            //    cart = cart.filter(p => String(p.ItemID) !== String(itemId));
+                            //}
+
+                            //localStorage.setItem("cart", JSON.stringify(cart));
+
+                            let stockHandler = item.ItemQuantity;
+                            stockHandler = (stockHandler + change);
+
+                            if ((stockHandler) > item.StockQuantity) {
+
+                                alert("There is no this in stock");
+                            }
+                            else {
+                                item.ItemQuantity += change; // Ensure correct property name
+
+                                if (item.ItemQuantity <= 0) {
+                                    cart = cart.filter(p => String(p.ItemID) !== String(itemId));
+                                }
+
+                                localStorage.setItem("cart", JSON.stringify(cart));
+                            }
                         }
+                    }
+
+                    loadCart(); // Reload UI after update
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Request Failed:", status, error);
+                }
+            });
+        }
+
+        function removeFromCart(itemId) {
+            $.ajax({
+                url: "/Customer/RemoveItem",
+                method: "POST",
+                data: { ItemID: itemId },
+                success: function (response) {
+                    if (!response.sessionAvailable) {
+                        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+                        cart = cart.filter(p => String(p.ItemID) !== String(itemId)); // Ensure proper ID comparison
 
                         localStorage.setItem("cart", JSON.stringify(cart));
                     }
+
+
+                    loadCart(); // Reload UI
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Request Failed:", status, error);
                 }
+            });
+        }
 
-                loadCart(); // Reload UI after update
-            },
-            error: function (xhr, status, error) {
-                console.error("AJAX Request Failed:", status, error);
-            }
-        });
-    }
-
-    function removeFromCart(itemId) {
-        $.ajax({
-            url: "/Customer/RemoveItem",
-            method: "POST",
-            data: { ItemID: itemId },
-            success: function (response) {
-                if (!response.sessionAvailable) {
-                    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-                    cart = cart.filter(p => String(p.ItemID) !== String(itemId)); // Ensure proper ID comparison
-
-                    localStorage.setItem("cart", JSON.stringify(cart));
+        function updateCartCount() {
+            $.ajax({
+                url: "/Customer/GetCartCount",
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    if (response.success) {
+                        $("#cart-count").text(response.count); // Update cart count from DB
+                    } else {
+                        let localCart = JSON.parse(localStorage.getItem("cart")) || [];
+                        $("#cart-count").text(localCart.length); // Get cart count from local storage
+                    }
+                },
+                error: function () {
+                    console.log("Error fetching cart count.");
                 }
+            });
+        }
 
-                loadCart(); // Reload UI
-            },
-            error: function (xhr, status, error) {
-                console.error("AJAX Request Failed:", status, error);
+
+        function Reset_Payement_Method() {
+
+            updateTotalPrice();
+
+            //let selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+
+            //if (selectedPayment) {
+            //    selectedPayment.checked = false; // Uncheck the selected payment method
+            //}
+        }
+
+        //cOFIRM Order
+
+        function placeOrder() {
+            let selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+
+            if (!selectedPayment) {
+                alert("⚠️ Please select a payment method before placing the order.");
+                return;
             }
-        });
-    }
 
-    function updateCartCount() {
-        $.ajax({
-            url: "/Customer/GetCartCount",
-            type: "GET",
-            dataType: "json",
-            success: function (response) {
-                if (response.success) {
-                    $("#cart-count").text(response.count); // Update cart count from DB
+            let paymentMethod = selectedPayment.id; // Get selected payment method (cashOnDelivery or paypal)
+            let totalAmount = parseFloat(document.getElementById("total-price").textContent.replace("Rs.", "").trim()) || 0;
+
+            // full address
+            let firstName = document.getElementById("first-name").value.trim();
+            let lastName = document.getElementById("last-name").value.trim();
+            let streetAddress = document.getElementById("street-address").value.trim();
+            let city = document.getElementById("city").value.trim();
+            let postalCode = document.getElementById("postal-code").value.trim();
+            let email = document.getElementById("email").value.trim();
+
+            let fullAddress = `${firstName}, ${lastName}, ${streetAddress}, ${city}, ${postalCode}, ${email}`;
+
+            // Extract cart items from table rows
+            let cartItems = [];
+
+            document.querySelectorAll("#cart-items-checkout tr").forEach(row => {
+                let itemID = row.getAttribute("data-id"); // Extract item ID from data-id attribute
+
+                // Ensure row has required structure before extracting data
+                let nameCell = row.querySelector(".cart-item-name");
+                let priceCell = row.querySelector(".cart-item-price");
+                let quantityCell = row.querySelector(".cart-item-quantity span");
+
+                if (nameCell && priceCell && quantityCell) {
+
+                    let name = nameCell.textContent.trim();
+                    let unitPrice = priceCell.textContent.replace("Rs.", "");
+                    let quantity = quantityCell.textContent.trim();
+
+                    cartItems.push({ itemID, name, unitPrice, quantity });
+
                 } else {
-                    let localCart = JSON.parse(localStorage.getItem("cart")) || [];
-                    $("#cart-count").text(localCart.length); // Get cart count from local storage
+
+                    alert("Row structure missing required elements", row);
+
                 }
-            },
-            error: function () {
-                console.log("Error fetching cart count.");
+            });
+
+            if (cartItems.length === 0) {
+                alert("⚠️ Your cart is empty. Please add items before placing an order.");
+                return;
             }
-        });
-    }
+
+            if (paymentMethod === "cashOnDelivery") {
+                // Show confirmation message
+                let confirmCOD = confirm(`You will receive your order within 1-2 days.
+You have to pay COD amount: Rs.${totalAmount}. Are you sure you want to proceed with COD?`);
+
+                if (confirmCOD) {
+                    // Send AJAX request
+                    $.ajax({
+                        type: "POST",
+                        url: "/Customer/ProcessOrder",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            paymentMethod: "COD",
+                            totalAmount: totalAmount,
+                            cartItems: JSON.stringify(cartItems),
+                            fullAddress: fullAddress
+                        }),
+                        success: function (response) {
+                            alert("✅ Order placed successfully with Cash on Delivery!");
+                            //window.location.href = = '@Url.Action("Index", "Customer")';
+                        },
+                        error: function () {
+                            alert("❌ Failed to place order. Please try again.");
+                        }
+                    });
+                }
+            } else if (paymentMethod === "paypal") {
+                // Open PayPal modal
+                $("#paypalModal").modal("show");
+            }
+        }
 
 
-</script>
+        // Extract cart items from table rows
+        function extractCartItems() {
+            let cartItemsExtracted = [];
+
+            document.querySelectorAll("#cart-items-checkout-test tr").forEach(row => {
+                let itemID = row.getAttribute("data-id"); // Extract item ID from data-id attribute
+
+                // Ensure row has required structure before extracting data
+                let nameCell = row.querySelector(".cart-item-name");
+                let priceCell = row.querySelector(".cart-item-price");
+                let quantityCell = row.querySelector(".cart-item-quantity span");
+
+                if (nameCell && priceCell && quantityCell) {
+
+                    let name = nameCell.textContent.trim();
+                    let unitPrice = priceCell.textContent.replace("Rs.", "");
+                    let quantity = quantityCell.textContent.trim();
+
+                    cartItemsExtracted.push({ itemID, name, unitPrice, quantity });
+
+                } else {
+
+                    alert("Row structure missing required elements", row);
+
+                }
+            });
+
+            // Debugging Output
+            alert(cartItemsExtracted);
+
+            return cartItemsExtracted;
+        }
+
+    </script>

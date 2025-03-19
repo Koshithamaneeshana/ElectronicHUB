@@ -1,4 +1,5 @@
 ﻿using ElectronicHub.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -18,6 +19,13 @@ namespace ElectronicHub.Controllers
         public static string Get_Item_Data_By_ID_Query = "SELECT TOP (1) [ID] ,[ItemID],[ItemName] ,[ItemQuantity],[Item_Price],[Item_Description],[Item_Stock_limit]FROM [Items] WHere ItemID =@ItemID";
 
 
+        //Order
+
+        public static string SaveOrderToDatabase_Query = @" INSERT INTO [Order] (UserId, Address, Status, Date, Sub_Total, Paymet_Type, Tracking_Number) 
+                                                            VALUES (@UserId, @Address, @Status, @Date, @Sub_Total, @Paymet_Type, @Tracking_Number);
+                                                            
+                                                            SELECT SCOPE_IDENTITY();";
+
         // GET: Customer
         public ActionResult Index()
         {
@@ -34,41 +42,68 @@ namespace ElectronicHub.Controllers
             return View();
         }
 
-        public JsonResult AddToCart(String ProductId)
+        public JsonResult AddToCart(string ProductId)
         {
             try
             {
                 List<Item> item = Get_Item_Data_By_ID(ProductId);
 
-                if(item.Count > 0)
+                if (item.Count > 0)
                 {
                     if (Session["username"] != null && !string.IsNullOrEmpty(Session["username"].ToString()))
                     {
+                        string userId = Session["UserId"].ToString();
+
                         using (SqlConnection con = new SqlConnection(constring))
                         {
                             con.Open();
 
-                            using (SqlCommand cmd = new SqlCommand(AddToCart_query, con))
+                            foreach (var product in item)
                             {
-                                for (int i = 0; i < item.Count; i++)
+                                // 1️⃣ Check if item already exists in cart
+                                string checkQuery = "SELECT Quantity FROM Cart_Item WHERE UserId = @UserId AND ItemID = @ItemID";
+                                using (SqlCommand checkCmd = new SqlCommand(checkQuery, con))
                                 {
-                                    cmd.Parameters.AddWithValue("@ItemID", item[i].ItemID);
-                                    cmd.Parameters.AddWithValue("@ItemName", item[i].ItemName);
-                                    cmd.Parameters.AddWithValue("@Quantity", 1);
-                                    cmd.Parameters.AddWithValue("@Unit_Price", item[i].Item_Price);
-                                    cmd.Parameters.AddWithValue("@UserId", Session["username"].ToString());
-                                    cmd.ExecuteNonQuery();
+                                    checkCmd.Parameters.AddWithValue("@UserId", userId);
+                                    checkCmd.Parameters.AddWithValue("@ItemID", product.ItemID);
+
+                                    object existingQuantity = checkCmd.ExecuteScalar();
+
+                                    if (existingQuantity != null)  // ✅ If item exists, update quantity
+                                    {
+                                        string updateQuery = "UPDATE Cart_Item SET Quantity = Quantity + 1 WHERE UserId = @UserId AND ItemID = @ItemID";
+                                        using (SqlCommand updateCmd = new SqlCommand(updateQuery, con))
+                                        {
+                                            updateCmd.Parameters.AddWithValue("@UserId", userId);
+                                            updateCmd.Parameters.AddWithValue("@ItemID", product.ItemID);
+                                            updateCmd.ExecuteNonQuery();
+                                        }
+                                    }
+                                    else  // ❌ If item does NOT exist, insert a new row
+                                    {
+                                        string insertQuery = @"
+                                    INSERT INTO Cart_Item (ItemID, ItemName, Quantity, Unit_Price, UserId) 
+                                    VALUES (@ItemID, @ItemName, @Quantity, @Unit_Price, @UserId)";
+
+                                        using (SqlCommand insertCmd = new SqlCommand(insertQuery, con))
+                                        {
+                                            insertCmd.Parameters.AddWithValue("@ItemID", product.ItemID);
+                                            insertCmd.Parameters.AddWithValue("@ItemName", product.ItemName);
+                                            insertCmd.Parameters.AddWithValue("@Quantity", 1);
+                                            insertCmd.Parameters.AddWithValue("@Unit_Price", product.Item_Price);
+                                            insertCmd.Parameters.AddWithValue("@UserId", userId);
+                                            insertCmd.ExecuteNonQuery();
+                                        }
+                                    }
                                 }
-
                             }
-                            con.Close();
-
-                            return Json(new { success = true, message = "Product Added to Cart" });
                         }
+
+                        return Json(new { success = true, message = "Product added to cart" });
                     }
                     else
                     {
-                        // Return data for JavaScript to handle Local Storage
+
                         return Json(new
                         {
                             success = true,
@@ -78,17 +113,16 @@ namespace ElectronicHub.Controllers
                                 ItemID = item[0].ItemID,
                                 ItemName = item[0].ItemName,
                                 ItemQuantity = 1,  // Default quantity
-                                Item_Price = item[0].Item_Price
+                                Item_Price = item[0].Item_Price,
+                                StockQuantity = item[0].ItemQuantityINT
                             }
                         });
                     }
                 }
                 else
                 {
-                    return Json(new { success = false, message = "No Products Found" });
+                    return Json(new { success = false, message = "No products found" });
                 }
-
-                
             }
             catch (Exception ex)
             {
@@ -120,7 +154,7 @@ namespace ElectronicHub.Controllers
                                     ItemName = reader["ItemName"].ToString(),
                                     Item_Price = reader["Item_Price"].ToString(),
                                     Item_Description = reader["Item_Description"].ToString(),
-                                    Item_Stock_limit = Convert.ToInt32(reader["Item_Stock_limit"]),
+                                    ItemQuantityINT = Convert.ToInt32(reader["ItemQuantity"]),
 
                                 });
                             }
@@ -179,7 +213,7 @@ namespace ElectronicHub.Controllers
             {
                 using (SqlConnection con = new SqlConnection(constring))
                 {
-                    string query = "  SELECT cart.Cart_ID,cart.ItemID,cart.ItemName,cart.Quantity,cart.Unit_Price,cart.UserId , items.Item_Image1 FROM Cart_Item as cart  left Join Items as items ON cart.ItemID = items.ItemID  WHERE UserId = @UserId";
+                    string query = "  SELECT cart.Cart_ID,cart.ItemID,cart.ItemName,cart.Quantity,cart.Unit_Price,cart.UserId , items.Item_Image1 ,items.ItemQuantity FROM Cart_Item as cart  left Join Items as items ON cart.ItemID = items.ItemID  WHERE UserId = @UserId";
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@UserId", Session["username"].ToString());
 
@@ -189,13 +223,14 @@ namespace ElectronicHub.Controllers
 
                     while (reader.Read())
                     {
-                        cart.Add(new 
+                        cart.Add(new
                         {
                             ItemID = reader["ItemID"].ToString(),
                             ItemName = reader["ItemName"].ToString(),
                             Item_Price = reader["Unit_Price"].ToString(),
                             ItemQuantity = reader["Quantity"].ToString(),
                             Item_Image1 = reader["Item_Image1"] != DBNull.Value ? "data:image/jpeg;base64," + Convert.ToBase64String((byte[])reader["Item_Image1"]) : "",
+                            StockQuantity = reader["ItemQuantity"].ToString()
                         });
                     }
 
@@ -281,7 +316,7 @@ namespace ElectronicHub.Controllers
         }
 
         // Update Quantity
-        public JsonResult UpdateQuantity(string ItemID, int Change)
+        public JsonResult UpdateQuantity(string ItemID, int Change )
         {
             if (Session["username"] != null)
             {
@@ -318,6 +353,211 @@ namespace ElectronicHub.Controllers
             }
             return Json(new { success = true, sessionAvailable = Session["username"] != null });
         }
+
+        public JsonResult ProcessOrder(string paymentMethod, decimal totalAmount, string cartItems , string fullAddress)
+        {
+            try
+            {
+                // Deserialize JSON string to List<CartItem>
+                List<OrderItem> cartItemList = JsonConvert.DeserializeObject<List<OrderItem>>(cartItems);
+
+                // Process order (Save to database or perform further actions)
+                string Order_Number = SaveOrderToDatabase(paymentMethod, totalAmount, fullAddress);
+
+                if(Order_Number != "0")
+                {
+                    bool isOrderItemsSaved = SaveOrderItemsToDatabase(paymentMethod, totalAmount, cartItemList , Order_Number);
+                    
+
+                    if (isOrderItemsSaved)
+                    {
+                        bool isUpdateItemsStock = UpdateItemsStockDatabase(paymentMethod, totalAmount, cartItemList);
+
+                        if (isUpdateItemsStock)
+                        {
+                            bool empty_Cart = DeleteItemsFromCartDatabase(paymentMethod, totalAmount, cartItemList);
+
+                            if (empty_Cart)
+                            {
+                                return Json(new { success = false, message = "Cart Empty Failed" });
+                            }
+                            else
+                            {
+                                return Json(new { success = true, message = "Order placed successfully!" });
+                            }
+                            
+                        }
+                        else
+                        {
+                            return Json(new { success = false, message = "Stocks Update Failed" });
+                        }                      
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Order Item Saving Error" });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Order Saving Error" });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+
+
+
+        private bool SaveOrderItemsToDatabase(string paymentMethod, decimal totalAmount, List<OrderItem> cartItems, string Order_ID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(constring))
+                {
+                    con.Open();
+
+                    string query = @"
+                INSERT INTO Order_Item (Order_ID, ItemID, ItemName, Quantity, Unit_price) 
+                VALUES (@Order_ID, @ItemID, @ItemName, @Quantity, @Unit_price);";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        foreach (var item in cartItems)
+                        {
+                            cmd.Parameters.Clear();  
+
+                            cmd.Parameters.AddWithValue("@Order_ID", Order_ID);
+                            cmd.Parameters.AddWithValue("@ItemID", item.itemID);
+                            cmd.Parameters.AddWithValue("@ItemName", item.Name);
+                            cmd.Parameters.AddWithValue("@Quantity", item.Quantity);
+                            cmd.Parameters.AddWithValue("@Unit_price", item.UnitPrice);
+
+                            cmd.ExecuteNonQuery();  
+                        }
+                    }
+                }
+
+                return true;  
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Error saving order items: " + ex.Message);
+                return false;  
+            }
+        }
+
+        private string SaveOrderToDatabase(string paymentMethod, decimal totalAmount, string fullAddress)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(constring))
+                {
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(SaveOrderToDatabase_Query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@UserId", Session["UserId"].ToString());
+                        cmd.Parameters.AddWithValue("@Address", fullAddress);
+                        cmd.Parameters.AddWithValue("@Status", "Pending Shipment");
+                        cmd.Parameters.AddWithValue("@Date", DateTime.Now);
+                        cmd.Parameters.AddWithValue("@Sub_Total", totalAmount);
+                        cmd.Parameters.AddWithValue("@Paymet_Type", paymentMethod);
+                        cmd.Parameters.AddWithValue("@Tracking_Number", "Pending");
+
+                        // Retrieve the new Order_ID
+                        object result = cmd.ExecuteScalar();
+                        int newOrderID = Convert.ToInt32(result);
+
+                        return newOrderID.ToString();
+
+                    }
+
+                }
+            }
+            catch (Exception e03)
+            {
+                return "0";
+            }
+        }
+
+        private bool UpdateItemsStockDatabase(string paymentMethod, decimal totalAmount, List<OrderItem> cartItems)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(constring))
+                {
+                    con.Open();
+
+                    string query = @"
+                                    UPDATE Items 
+                                    SET ItemQuantity = ItemQuantity - @Quantity 
+                                    WHERE ItemID = @ItemID;";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        foreach (var item in cartItems)
+                        {
+                            cmd.Parameters.Clear();  
+
+                            cmd.Parameters.AddWithValue("@ItemID", item.itemID);
+                            cmd.Parameters.AddWithValue("@Quantity", item.Quantity);
+
+                            cmd.ExecuteNonQuery();  
+                        }
+                    }
+                }
+
+                return true;  
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Error updating item stock: " + ex.Message);
+                return false;  
+            }
+        }
+
+        private bool DeleteItemsFromCartDatabase(string paymentMethod, decimal totalAmount, List<OrderItem> cartItems)
+        {
+            try
+            {
+                if (Session["UserId"] == null || string.IsNullOrEmpty(Session["UserId"].ToString()))
+                {
+                    Console.WriteLine("❌ Error: User is not logged in.");
+                    return false;
+                }
+
+                using (SqlConnection con = new SqlConnection(constring))
+                {
+                    con.Open();
+
+                    string query = @"DELETE FROM Cart_Item WHERE ItemID = @ItemID AND UserId = @UserId;";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        foreach (var item in cartItems)
+                        {
+                            cmd.Parameters.Clear(); // Clear previous parameters
+
+                            cmd.Parameters.AddWithValue("@ItemID", item.itemID);
+                            cmd.Parameters.AddWithValue("@UserId", Session["UserId"].ToString());
+
+                            cmd.ExecuteNonQuery(); // Execute deletion
+                        }
+                    }
+                }
+
+                return true; // 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Error deleting items from cart: " + ex.Message);
+                return false;
+            }
+        }
+
 
     }
 }

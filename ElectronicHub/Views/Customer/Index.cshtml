@@ -66,12 +66,30 @@
             transform: translate(0, 0) rotate(0deg);
         }
     }
+
+    /* AI Assistant Icon Styles */
+    .ai-assistant-icon {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+        padding: 15px;
+        cursor: pointer;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        transition: background-color 0.3s ease;
+    }
+
+        .ai-assistant-icon:hover {
+            background-color: #0056b3;
+        }
 </style>
 
 <body>
     <div class="container-lg">
         <nav class="navbar navbar-expand-lg" style="background: linear-gradient(to right, #0a0f29, #162447);">
-            <a class="navbar-brand text-white" href="#">Electronic HUB</a>
+            <a class="navbar-brand text-white" href="@Url.Action("Index", "Customer")">Electronic HUB</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
@@ -80,10 +98,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link text-white" href="#">Home <span class="sr-only">(current)</span></a>
+                        <a class="nav-link text-white" href="#">Blog <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">Link</a>
+                        <a class="nav-link text-white" href="#">Offers</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
@@ -91,16 +109,15 @@
                             Category
                         </a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Componants</a>
+                            <a class="dropdown-item" href="#">Tools</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
+                            <a class="dropdown-item" href="#">PCB</a>
                         </div>
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
+                    <input id="searchInput" class="form-control mb-6" type="search">
                 </form>
                 <li class="nav-item dropdown">
                     <a href="" id="cart-icon" role="button" data-toggle="modal" data-target="#Modal_Cart_Data" onclick="loadCart()">
@@ -179,6 +196,7 @@
                             <tr>
                                 <th>Image</th>
                                 <th>Name</th>
+                                <th>Stock</th>
                                 <th>Unit Price</th>
                                 <th>Quantity</th>
                                 <th>Total</th>
@@ -197,7 +215,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="modal fade" id="Modal_AddtoCart">
         <div class="modal-dialog">
@@ -237,17 +254,58 @@
     </div>
 
 </div>
+
+<!-- Existing Content -->
+<!-- AI Assistant Icon -->
+<div id="aiAssistantIcon" class="ai-assistant-icon" data-toggle='modal' data-target='#aiMessageModal'>
+    <i class="fa fa-robot fa-3x"></i>
+</div>
+
+<!-- AI Assistant Message Modal -->
+<!-- AI Assistant Modal -->
+<div id="aiMessageModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">AI Assistant</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>AI Assistant is currently under development. Please check back later!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Existing Content -->
 <script src="~/Content/Jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         LoadProducts();
         updateCartCount();
 
+        $("#searchInput").on("keyup", function () {
+            let searchText = $(this).val().trim().toLowerCase(); // Get input and make lowercase
+
+            $("#productsContainer .col-lg-3").each(function () {
+                let productName = $(this).find(".card-title").text().trim().toLowerCase(); // Get product name
+                // Show/hide products based on search match
+                $(this).toggle(productName.includes(searchText));
+            });
+        });
     });
 
+    function CallAI() {
+        alert("AI");
+    }
     //Animation
 
-    const overlay = document.querySelector('.container');
+    const overlay = document.querySelector('.container2');
 
             // Array of electronic component images (Replace with actual paths)
             const componentImages = [
@@ -354,10 +412,11 @@
                 <tr data-id="${item.ItemID}">
                     <td><img src="${item.Item_Image1}" width="80" height="80" ></td>
                     <td>${item.ItemName}</td>
+                    <td data-stock="${item.StockQuantity}">${item.StockQuantity}</td>
                     <td>Rs.${item.Item_Price}</td>
                     <td>
                         <button class="btn btn-sm btn-light decrease">-</button>
-                        <span class="px-2">${item.ItemQuantity}</span>
+                        <span class="px-2" data-ItemQuantity="${item.ItemQuantity}">${item.ItemQuantity}</span>
                         <button class="btn btn-sm btn-light increase">+</button>
                     </td>
                     <td>Rs.${itemTotal.toFixed(2)}</td>
@@ -370,9 +429,14 @@
         $("#cart-count").text(cartItems.length);
     }
 
-        // Increase Quantity
+    // Increase Quantity
     $(document).on("click", ".increase", function () {
-        updateQuantity($(this).closest("tr").data("id"), 1);
+        var row = $(this).closest("tr");
+        var itemId = row.data("id");
+        var stock = row.find("td[data-stock]").data("stock");
+        var qty = row.find("span[data-ItemQuantity]").data("ItemQuantity");
+
+        updateQuantity(itemId, 1); // Pass the correct values
     });
 
     // Decrease Quantity
@@ -385,8 +449,8 @@
         removeFromCart($(this).closest("tr").data("id"));
     });
 
-
     function updateQuantity(itemId, change) {
+
         $.ajax({
             url: "/Customer/UpdateQuantity",
             method: "POST",
@@ -397,13 +461,25 @@
                     let item = cart.find(p => String(p.ItemID) === String(itemId));
 
                     if (item) {
-                        item.ItemQuantity += change; // Ensure correct property name
 
-                        if (item.ItemQuantity <= 0) {
-                            cart = cart.filter(p => String(p.ItemID) !== String(itemId));
+                        let stockHandler = item.ItemQuantity;
+                        stockHandler = (stockHandler + change);
+
+                        if ((stockHandler) > item.StockQuantity) {
+
+                            alert("There is no this in stock");
+                        }
+                        else
+                        {
+                            item.ItemQuantity += change; // Ensure correct property name
+
+                            if (item.ItemQuantity <= 0) {
+                                cart = cart.filter(p => String(p.ItemID) !== String(itemId));
+                            }
+
+                            localStorage.setItem("cart", JSON.stringify(cart));
                         }
 
-                        localStorage.setItem("cart", JSON.stringify(cart));
                     }
                 }
 
@@ -414,7 +490,6 @@
             }
         });
     }
-
 
     function removeFromCart(itemId) {
         $.ajax({
@@ -437,7 +512,6 @@
             }
         });
     }
-
 
     function updateCartCount() {
         $.ajax({
@@ -473,8 +547,8 @@
                         <div class="card shadow-sm border-0">
                             <img src="${product.Item_Image1}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="Product Image">
                             <div class="card-body text-center">
-                                <h5 class="card-title text-primary">Rs.${product.Item_Price}</h5>
-                                <p class="card-text text-muted">Stock: ${product.ItemQuantity}</p>
+                                <h5 class="card-title text-primary">${product.ItemName}</h5>
+                                <p class="card-text text-muted">Rs.${product.Item_Price} - Stock: ${product.ItemQuantity}</p>
                                 <div class="d-flex justify-content-around">
                                     <button class="btn btn-success btn-sm" onclick="AddToCart(${product.ItemID})">
                                         <i class="fas fa-cart-plus"></i> Add to Cart
@@ -542,6 +616,8 @@
     function ViewProduct(productId) {
         alert("Viewing details for product " + productId);
     }
+
+    //filter
 
 </script>
 

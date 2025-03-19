@@ -46,6 +46,7 @@ namespace ElectronicHub.Controllers
                         Session["username"] = user.Username.ToString();
                         Session["role"] = sdr[6].ToString();
                         Session["Name"] = sdr[5].ToString();
+                        Session["UserId"] = sdr[1].ToString();
 
                         if (Session["role"].ToString() == "1")
                         {

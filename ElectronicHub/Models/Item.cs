@@ -11,6 +11,7 @@ namespace ElectronicHub.Models
         public string ItemID { get; set; }
         public string ItemName { get; set; }
         public string ItemQuantity { get; set; }
+        public int ItemQuantityINT { get; set; }
         public string Item_Price { get; set; }
         public string Item_Description { get; set; }
         public int Item_Stock_limit { get; set; }

@@ -16,7 +16,7 @@ namespace ElectronicHub
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Login", action = "Login", id = UrlParameter.Optional }
+                defaults: new { controller = "Customer", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

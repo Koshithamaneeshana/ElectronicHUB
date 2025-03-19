@@ -38,6 +38,14 @@ namespace ElectronicHub.Controllers
         {
             return View();
         }
+        public ActionResult AwaitingShipment_COD()
+        {
+            return View();
+        }
+        public ActionResult AwaitingShipment_Paypal()
+        {
+            return View();
+        }
 
         [HttpPost]
         public JsonResult AddItemData(Item item)
@@ -132,6 +140,42 @@ namespace ElectronicHub.Controllers
             }
 
             JsonResult result = Json(products, JsonRequestBehavior.AllowGet);
+            result.MaxJsonLength = int.MaxValue; // Allows a very large JSON size
+            return result;
+        }
+
+
+        public JsonResult GetAll_Avaiting_COD_Load()
+        {
+            List<object> Orders = new List<object>();
+
+            using (SqlConnection con = new SqlConnection(constring))
+            {
+                con.Open();
+                string query = "SELECT * FROM [Order] Where Paymet_Type ='COD'";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Orders.Add(new
+                            {
+                                Order_ID = Convert.ToInt32(reader["Order_ID"]),
+                                UserId = reader["UserId"].ToString(),
+                                Address = reader["Address"].ToString(),
+                                Status = reader["Status"].ToString(),
+                                Date = reader["Date"].ToString(),
+                                Sub_Total = reader["Sub_Total"].ToString(),
+                                Paymet_Type = reader["Paymet_Type"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+
+            JsonResult result = Json(Orders, JsonRequestBehavior.AllowGet);
             result.MaxJsonLength = int.MaxValue; // Allows a very large JSON size
             return result;
         }
