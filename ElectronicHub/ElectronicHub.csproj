@@ -132,6 +132,7 @@
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderItem.cs" />
+    <Compile Include="Models\Review.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -166,6 +167,7 @@
     <Content Include="Resources\cap7.png" />
     <Content Include="Resources\cap8.png" />
     <Content Include="Resources\cap9.png" />
+    <Content Include="Resources\user.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\bootstrap4-toggle.min.js" />
@@ -218,6 +220,26 @@
     <Content Include="Views\Customer\Checkout.cshtml" />
     <Content Include="Views\StoreHandler\AwaitingShipment_COD.cshtml" />
     <Content Include="Views\StoreHandler\AwaitingShipment_Paypal.cshtml" />
+    <Content Include="Views\Admin\Stock_Index.cshtml" />
+    <Content Include="Views\Admin\AwaitingShipment.cshtml" />
+    <Content Include="Views\Admin\AwaitingShipment_COD.cshtml" />
+    <Content Include="Views\Admin\AwaitingShipment_Paypal.cshtml" />
+    <Content Include="Views\Admin\View_Products_Admin.cshtml" />
+    <Content Include="Views\Admin\Add_Products_Admin.cshtml" />
+    <Content Include="Views\Customer\User_profile_Handling.cshtml" />
+    <Content Include="Views\Customer\Addresses_Handling.cshtml" />
+    <Content Include="Views\Customer\Orders_Handling.cshtml" />
+    <Content Include="Views\Login\Register.cshtml" />
+    <Content Include="Views\StoreHandler\CompletedShipment.cshtml" />
+    <Content Include="Views\StoreHandler\CompletedShipment_COD.cshtml" />
+    <Content Include="Views\StoreHandler\CompletedShipment_Paypal.cshtml" />
+    <Content Include="Views\StoreHandler\Category.cshtml" />
+    <Content Include="Views\StoreHandler\Add_Category.cshtml" />
+    <Content Include="Views\Admin\CompletedShipment.cshtml" />
+    <Content Include="Views\Admin\CompletedShipment_COD.cshtml" />
+    <Content Include="Views\Admin\CompletedShipment_Paypal.cshtml" />
+    <Content Include="Views\Admin\Category.cshtml" />
+    <Content Include="Views\Admin\Add_Category.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

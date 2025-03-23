@@ -127,8 +127,7 @@
                 var SetData = $("#table_Products_Data tbody");
                 for (var i = 0; i < ProductsList.length; i++) {
 
-                    if (ProductsList[i].ItemQuantity - ProductsList[i].Item_Stock_limit == 15)
-                    {
+                    if (ProductsList[i].ItemQuantity - ProductsList[i].Item_Stock_limit == 15) {
                         var Data = "<tr class='row_" + ProductsList[i].ID + "'>" +
                             "<td style='background-color: #FFAA33;'>" + ProductsList[i].ItemID + "</td>" +
                             "<td style='background-color: #FFAA33;'>" + ProductsList[i].ItemName + "</td>" +
@@ -142,8 +141,7 @@
                             "<td class='center'>" + "<a href='#' class='btn btn-warning' data-toggle='modal' data-target='#Modal_Update_Products' onclick='Edit_Products(" + ProductsList[i].ID + ")' ><span class='glyphicon glyphicon-edit'></span> Update </a>" + "</td>" +
                             "</tr>";
                     }
-                    else if (ProductsList[i].ItemQuantity - ProductsList[i].Item_Stock_limit == 10)
-                    {
+                    else if (ProductsList[i].ItemQuantity - ProductsList[i].Item_Stock_limit == 10) {
                         var Data = "<tr class='row_" + ProductsList[i].ID + "'>" +
                             "<td style='background-color: #F10C27;'>" + ProductsList[i].ItemID + "</td>" +
                             "<td style='background-color: #F10C27;'>" + ProductsList[i].ItemName + "</td>" +
@@ -157,8 +155,7 @@
                             "<td class='center'>" + "<a href='#' class='btn btn-warning' data-toggle='modal' data-target='#Modal_Update_Products' onclick='Edit_Products(" + ProductsList[i].ID + ")' ><span class='glyphicon glyphicon-edit'></span> Update </a>" + "</td>" +
                             "</tr>";
                     }
-                    else
-                    {
+                    else {
                         var Data = "<tr class='row_" + ProductsList[i].ID + "'>" +
                             "<td style='background-color: green;'>" + ProductsList[i].ItemID + "</td>" +
                             "<td style='background-color: green;'>" + ProductsList[i].ItemName + "</td>" +
@@ -241,9 +238,9 @@
 
 @*<img id="itemImage" src="" style="width:200px;height:auto;" />
 
-<script>
-    $(document).ready(function () {
-        var itemId = $('#Item_Code').val();
-        $("#itemImage").attr("src", "/StoreHandler/GetImage?itemId=" + itemId);
-    });
-</script>*@
+    <script>
+        $(document).ready(function () {
+            var itemId = $('#Item_Code').val();
+            $("#itemImage").attr("src", "/StoreHandler/GetImage?itemId=" + itemId);
+        });
+    </script>*@

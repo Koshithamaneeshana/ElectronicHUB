@@ -1,0 +1,228 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="exampleFormControlTextarea">Category Name</label>
+                <input type="text" class="form-control" id="newCategoryName" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="exampleFormControlTextarea">Description</label>
+                <textarea class="form-control" id="newCategoryDescription" rows="3" required></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <button type="button" class="btn btn-success" onclick="insertCategory()">Add Category</button>
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+
+    </div>
+
+
+    <br /><br />
+    <div class="col-md-12">
+        <div>
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Category Data</h3>
+                    <input type="text" class="form-control pull-right" id="dev-table-filter" data-action="filter" data-filters="#table_categoryList_Data" placeholder="Filter" />
+                </div>
+                <table class="table table-hover" id="table_categoryList_Data">
+                    <thead>
+                        <tr>
+                            <th class="center">Category ID</th>
+                            <th class="center">Category Name</th>
+                            <th class="center">Description</th>
+                            <th class="center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal for Category View and Update -->
+    <div class="modal fade" id="Modal_Update_Category" tabindex="-1" role="dialog" aria-labelledby="Modal_Category_Label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Category_Label">Update Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="categoryID">Category ID</label>
+                                <input type="text" class="form-control" id="categoryID" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="categoryName">Category Name</label>
+                                <input type="text" class="form-control" id="categoryName" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="categoryDescription">Description</label>
+                                <textarea class="form-control" id="categoryDescription" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-primary" onclick="updateCategory()">Update Category</button>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+<script src="~/Content/Jquery/3.5.1/jquery.min.js"></script>
+<script>
+    GetAll_Category_Load();
+
+    function GetAll_Category_Load() {
+        $.ajax({
+            type: "GET",
+            url: '/StoreHandler/GetAll_Category_Load',
+            success: function (categoryList) {
+                $("#table_categoryList_Data tbody").empty();
+                var SetData = $("#table_categoryList_Data tbody");
+                for (var i = 0; i < categoryList.length; i++) {
+                    var Data = "<tr class='row_" + categoryList[i].CategoryID + "'>" +
+                        "<td style='background-color: green;'>" + categoryList[i].CategoryID + "</td>" +
+                        "<td style='background-color: green;'>" + categoryList[i].CategoryName + "</td>" +
+                        "<td style='background-color: green;'>" + categoryList[i].Description + "</td>" +
+                        "<td class='center'>" + "<a href='#' class='btn btn-warning' data-toggle='modal' data-target='#Modal_Update_Category' onclick='Edit_Update_updateCategory(" + categoryList[i].CategoryID + ")' ><span class='glyphicon glyphicon-edit'></span> Update </a>" + "</td>" +
+                        "</tr>";
+
+                    SetData.append(Data);
+                }
+            },
+            error: function (error) {
+                $.notify(error);
+            }
+        });
+    }
+
+    // Function to update category details
+    function updateCategory() {
+        var categoryID = $('#categoryID').val();
+        var categoryName = $('#categoryName').val();
+        var categoryDescription = $('#categoryDescription').val();
+
+        // Validate the form fields
+        if (categoryName === "" || categoryDescription === "") {
+            $.notify("Please fill out all fields", "error");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: '/StoreHandler/UpdateCategory', // URL to update category
+            data: {
+                CategoryID: categoryID,
+                CategoryName: categoryName,
+                Description: categoryDescription
+            },
+            success: function (response) {
+                if (response.success) {
+                    $.notify("Category updated successfully", "success");
+                    $('#Modal_Category').modal('hide');
+                    GetAll_Category_Load();  // Reload the category list (if applicable)
+                } else {
+                    $.notify("Failed to update category", "error");
+                }
+            },
+            error: function (error) {
+                $.notify("Error updating category", "error");
+            }
+        });
+    }
+
+
+    function Edit_Update_updateCategory(categoryID) {
+        // Set the category ID in the hidden field (for reference when updating)
+        $('#categoryID').val(categoryID);
+
+        // AJAX request to fetch the category details by CategoryID
+        $.ajax({
+            type: "GET",
+            url: '/StoreHandler/GetCategoryDetails',  // Adjust the URL as needed
+            data: { categoryID: categoryID },
+            success: function (response) {
+                $('#categoryName').val(response.CategoryName);
+                    $('#categoryDescription').val(response.Description);
+
+            },
+            error: function (error) {
+                console.error(error);
+                alert('Error fetching category details');
+            }
+        });
+    }
+
+
+    // Function to insert a new category
+    function insertCategory() {
+        var categoryName = $('#newCategoryName').val();
+        var categoryDescription = $('#newCategoryDescription').val();
+
+        // Validate the form fields
+        if (categoryName === "" || categoryDescription === "") {
+            $.notify("Please fill out all fields", "error");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: '/StoreHandler/InsertCategory', // URL to insert the new category
+            data: {
+                CategoryName: categoryName,
+                Description: categoryDescription
+            },
+            success: function (response) {
+                if (response.success) {
+                    $.notify("Category added successfully", "success");
+                    $('#Modal_Add_Category').modal('hide');
+                    GetAll_Category_Load();  // Reload the category list after adding
+                } else {
+                    $.notify("Failed to add category", "error");
+                }
+            },
+            error: function (error) {
+                $.notify("Error adding category", "error");
+            }
+        });
+    }
+
+
+</script>

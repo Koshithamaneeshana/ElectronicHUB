@@ -1,0 +1,185 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Orders_Handling</title>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="col-md-12">
+            <div>
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">My Orders</h3>
+                        <input type="text" class="form-control pull-right" id="dev-table-filter" data-action="filter" data-filters="#table_customer_Orde_Data" placeholder="Filter" />
+                    </div>
+                    <table class="table table-hover" id="table_customer_Orde_Data">
+                        <thead>
+                            <tr>
+                                <th class="center">Order ID</th>
+                                <th class="center">Address</th>
+                                <th class="center">Status</th>
+                                <th class="center">Date</th>
+                                <th class="center">Sub_Total</th>
+                                <th class="center">Payment Type</th>
+                                <th class="center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Items Section (Initially hidden) -->
+    <div id="order-items-template" style="display: none;">
+        <table class="table table-striped order-items">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>
+<script>
+
+    GetAll_Customer_Orders();
+
+    function GetAll_Customer_Orders() {
+        $.ajax({
+            type: "GET",
+            url: '/Customer/GetAll_Customer_Orders',
+            success: function (OrderList) {
+                $("#table_customer_Orde_Data tbody").empty();
+                var SetData = $("#table_customer_Orde_Data tbody");
+                for (var i = 0; i < OrderList.length; i++) {
+
+                    if (OrderList[i].Status == 'Pending Shipment')
+                    {
+                        var Data = "<tr class='row_" + OrderList[i].Order_ID + "'>" +
+                            "<td style='background-color: #FFAA33;'>" + OrderList[i].Order_ID + "</td>" +
+                            "<td style='background-color: #FFAA33;'>" + OrderList[i].Address + "</td>" +
+                            "<td style='background-color: #FFAA33;'>" + OrderList[i].Status + "</td>" +
+                            "<td style='background-color: #FFAA33;'>" + OrderList[i].Date + "</td>" +
+                            "<td style='background-color: #FFAA33;'>" + OrderList[i].Sub_Total + "</td>" +
+                            "<td style='background-color: #FFAA33;'>" + OrderList[i].Paymet_Type + "</td>" +
+                            "<td class='center'>" +
+                            "<a href='#' class='btn btn-info' onclick='toggleOrderItems(" + OrderList[i].Order_ID + ")'>" +
+                            "<span class='glyphicon glyphicon-arrow-down'></span> View Items</a>" +
+                            "</td>" +
+                            "</tr>";
+                    }
+                    else
+                    {
+                        var Data = "<tr class='row_" + OrderList[i].Order_ID + "'>" +
+                            "<td style='background-color: green;'>" + OrderList[i].Order_ID + "</td>" +
+                            "<td style='background-color: green;'>" + OrderList[i].Address + "</td>" +
+                            "<td style='background-color: green;'>" + OrderList[i].Status + "</td>" +
+                            "<td style='background-color: green;'>" + OrderList[i].Date + "</td>" +
+                            "<td style='background-color: green;'>" + OrderList[i].Sub_Total + "</td>" +
+                            "<td style='background-color: green;'>" + OrderList[i].Paymet_Type + "</td>" +
+                            "<td class='center'>" +
+                            "<a href='#' class='btn btn-info' onclick='toggleOrderItems(" + OrderList[i].Order_ID + ")'>" +
+                            "<span class='glyphicon glyphicon-arrow-down'></span> View Items</a>" +
+                            "</td>" +
+                            "</tr>";
+                    }
+
+
+                    SetData.append(Data);
+                }
+            },
+            error: function (error) {
+                $.notify(error);
+            }
+        });
+    }
+
+    // Function to toggle visibility of order items
+    function toggleOrderItems(orderId) {
+
+        var row = $(".row_" + orderId);
+        var itemsTable = row.next(".order-items");
+
+        // If the order items are not loaded yet, fetch them
+        if (itemsTable.length == 0) {
+            loadOrderItems(orderId, row);
+        } else {
+            itemsTable.toggle(); // Toggle the visibility of the items table
+        }
+    }
+
+
+    // Function to load and display order items
+    function loadOrderItems(orderId, row) {
+        // Check if the order items table already exists, if so, remove it (close the table)
+        if (row.next().hasClass('order-items-table')) {
+            row.next().remove(); // Remove the order items table
+            return;  // Stop further execution if the table is already open
+        }
+
+        $.ajax({
+            type: "POST",  // POST request
+            url: '/Customer/GetOrderItems', // Make sure the URL matches the route in your backend
+            data: { orderId: orderId },  // Pass orderId in the data object for POST
+            success: function (OrderItems) {
+                var orderItemsTable = $("#order-items-template").clone().show().removeAttr("id");
+                var tbody = orderItemsTable.find("tbody");
+                var total = 0;
+                var shippingCost = 0;
+
+                // Loop through each item and calculate the total
+                for (var i = 0; i < OrderItems.length; i++) {
+                    var itemTotal = OrderItems[i].Quantity * OrderItems[i].Unit_price;
+                    total += itemTotal;
+
+                    var itemRow = "<tr>" +
+                        "<td>" + OrderItems[i].ItemName + "</td>" +
+                        "<td>" + OrderItems[i].Unit_price + "</td>" +
+                        "<td>" + OrderItems[i].Quantity + "</td>" +
+                        "<td>" + itemTotal.toFixed(2) + "</td>" +
+                        "</tr>";
+                    tbody.append(itemRow);
+                }
+
+                // Check if payment type is "COD" and add shipping cost
+                if (row.find('td').eq(5).text() === 'COD') {  // Assuming Payment Type is in the 5th column
+                    shippingCost = 400;
+                    total += shippingCost;
+
+                    var shippingRow = "<tr>" +
+                        "<td colspan='3' class='text-right'><strong>Shipping</strong></td>" +
+                        "<td><strong>" + shippingCost.toFixed(2) + "</strong></td>" +
+                        "</tr>";
+                    tbody.append(shippingRow);
+                }
+
+                // Append the items table below the order row
+                row.after(orderItemsTable.addClass('order-items-table'));
+
+                // Add a row for displaying the total
+                var totalRow = "<tr><td colspan='3' class='text-right'><strong>Total</strong></td><td><strong>" + total.toFixed(2) + "</strong></td></tr>";
+                tbody.append(totalRow);
+            },
+            error: function (error) {
+                $.notify(error);
+            }
+        });
+    }
+
+</script>

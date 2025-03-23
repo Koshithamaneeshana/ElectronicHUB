@@ -11,7 +11,7 @@
     </div>
     <div class="col-xl-3 col-md-3">
         <div class="card bg-warning text-white mb-4">
-            <div class="card-body" style="font-size:18px">Awaiting Shipments <span id="AwaitingShipment_Count" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
+            <div class="card-body" style="font-size:18px">Awaiting Shipments <span id="Fabrication_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
             <div class="card-footer d-flex align-items-center justify-content-between">
                 <a class="small text-white stretched-link" href="@Url.Action("AwaitingShipment", "StoreHandler")">View</a>
                 <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
@@ -20,7 +20,7 @@
     </div>
     <div class="col-xl-3 col-md-3">
         <div class="card bg-success text-white mb-4">
-            <div class="card-body" style="font-size:18px">Shipped Orders <span id="CompletedShipment_Count" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
+            <div class="card-body" style="font-size:18px">Shipped Orders <span id="Preventive_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
             <div class="card-footer d-flex align-items-center justify-content-between">
                 <a class="small text-white stretched-link" href="@Url.Action("CompletedShipment", "StoreHandler")">View</a>
                 <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
@@ -38,59 +38,15 @@
     </div>
 </div>
 <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#firstTab">Add Products</a></li>
-    <li><a data-toggle="tab" href="#secondTab">View Products</a></li>
+    <li class="active"><a data-toggle="tab" href="#firstTab">Completed Shipments COD</a></li>
+    <li ><a data-toggle="tab" href="#secondTab">Completed Shipments Paypal</a></li>
 </ul>
 <div class="tab-content">
-    <div id="firstTab" class="tab-pane fade in active">@Html.Action("Add_Products_StoreHandler")</div>
-    <div id="secondTab" class="tab-pane fade in">@Html.Action("View_Products_StoreHandler")</div>
+    <div id="firstTab" class="tab-pane fade in active">@Html.Action("CompletedShipment_COD")</div>
+    <div id="secondTab" class="tab-pane fade in">@Html.Action("CompletedShipment_Paypal")</div>
 </div>
 
+
 <script src="~/Content/Jquery/3.5.1/jquery.min.js"></script>
-
-<script>
-    $(document).ready(function () {
-        //Get Count Breakdown Pending Count By Location
-        //Preventive
-        $.ajax({
-            type: 'POST',
-            url: '/StoreHandler/AwaitingShipmentCount',
-            data: '{}',
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-
-            success: function (jsonData) {
-                document.getElementById('AwaitingShipment_Count').innerHTML = jsonData;
-
-            },
-            failure: function (r) {
-                alert(r);
-            },
-            error: function (r) {
-                alert(r);
-            }
-        });
-        //Shedule
-        $.ajax({
-            type: 'POST',
-            url: '/StoreHandler/CompletedShipmentCount',
-            data: '{}',
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-
-            success: function (jsonData) {
-                document.getElementById('CompletedShipment_Count').innerHTML = jsonData;
-
-            },
-            failure: function (r) {
-                alert(r);
-            },
-            error: function (r) {
-                alert(r);
-            }
-        });
-
-    });
-</script>
 
 

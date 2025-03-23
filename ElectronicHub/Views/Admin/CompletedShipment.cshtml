@@ -4,7 +4,7 @@
         <div class="card bg-primary text-white mb-4">
             <div class="card-body" style="font-size:18px">Store Products <span id="Shedule_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
             <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="@Url.Action("Index", "StoreHandler")">View</a>
+                <a class="small text-white stretched-link" href="@Url.Action("Index", "Admin")">View</a>
                 <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
             </div>
         </div>
@@ -13,7 +13,7 @@
         <div class="card bg-warning text-white mb-4">
             <div class="card-body" style="font-size:18px">Awaiting Shipments <span id="Fabrication_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
             <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="@Url.Action("AwaitingShipment", "StoreHandler")">View</a>
+                <a class="small text-white stretched-link" href="@Url.Action("AwaitingShipment", "Admin")">View</a>
                 <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
             </div>
         </div>
@@ -22,7 +22,7 @@
         <div class="card bg-success text-white mb-4">
             <div class="card-body" style="font-size:18px">Shipped Orders <span id="Preventive_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
             <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="@Url.Action("CompletedShipment", "StoreHandler")">View</a>
+                <a class="small text-white stretched-link" href="@Url.Action("CompletedShipment", "Admin")">View</a>
                 <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
             </div>
         </div>
@@ -31,19 +31,19 @@
         <div class="card bg-danger text-white mb-4">
             <div class="card-body" style="font-size:18px">Item Category<span id="BreakeDown_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span> </div>
             <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="@Url.Action("Category", "StoreHandler")">View</a>
+                <a class="small text-white stretched-link" href="@Url.Action("Category", "Admin")">View</a>
                 <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
             </div>
         </div>
     </div>
 </div>
 <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#firstTab">Pending Orders COD</a></li>
-    <li><a data-toggle="tab" href="#secondTab">Pending Orders Fully Paid</a></li>
+    <li class="active"><a data-toggle="tab" href="#firstTab">Completed Shipments COD</a></li>
+    <li><a data-toggle="tab" href="#secondTab">Completed Shipments Paypal</a></li>
 </ul>
 <div class="tab-content">
-    <div id="firstTab" class="tab-pane fade in active">@Html.Action("AwaitingShipment_COD")</div>
-    <div id="secondTab" class="tab-pane fade in">@Html.Action("AwaitingShipment_Paypal")</div>
+    <div id="firstTab" class="tab-pane fade in active">@Html.Action("CompletedShipment_COD")</div>
+    <div id="secondTab" class="tab-pane fade in">@Html.Action("CompletedShipment_Paypal")</div>
 </div>
 
 

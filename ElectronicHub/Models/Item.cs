@@ -28,5 +28,7 @@ namespace ElectronicHub.Models
 
         [NotMapped]
         public HttpPostedFileBase ImageFile3 { get; set; }
+
+        public List<Review> Ratings { get; set; }
     }
 }

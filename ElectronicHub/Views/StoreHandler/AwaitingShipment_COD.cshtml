@@ -53,6 +53,60 @@
 
     </div>
     <br /><br />
+
+    <!-- View Items Modal -->
+    <div class="modal fade" id="Modal_Load_Ordered_Items" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Order Items</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="orderItemsContent">
+                        <!-- Items will be loaded here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Update Tracking Modal -->
+    <div class="modal fade" id="Modal_Update_Tracking" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">Update Tracking Number</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="TrackingNumber">Tracking Number</label>
+                                <input type="text" class="form-control" id="TrackingNumber" placeholder="Enter Tracking Number" required />
+                            </div>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                    <form id="updateTrackingForm">
+                        <input type="hidden" id="Order_ID" />
+                        <div class="form-group text-center">
+                            <button type="button" class="btn btn-success" onclick="UpdateTracking()">Update Tracking</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </body>
 
 </html>
@@ -78,8 +132,8 @@
                         "<td>" + CODList[i].Date + "</td>" +
                         "<td>" + CODList[i].Sub_Total + "</td>" +
                         "<td>" + CODList[i].Paymet_Type + "</td>" +
-                        "<td class='center'>" + "<a href='#' class='btn btn-success' data-toggle='modal' data-target='#Modal_BreakDown_feedback' onclick='Edit_Feedback_BreakDown(" + CODList[i].ID + ")' ><span class='glyphicon glyphicon-edit'></span> View Items </a>" + "</td>" +
-                        "<td class='center'>" + "<a href='#' class='btn btn-warning' data-toggle='modal' data-target='#Modal_BreakDown_feedback' onclick='Edit_Feedback_BreakDown(" + CODList[i].ID + ")' ><span class='glyphicon glyphicon-edit'></span> Update Tracking </a>" + "</td>" +
+                        "<td class='center'>" + "<a href='#' class='btn btn-warning' data-toggle='modal' data-target='#Modal_Update_Tracking' onclick='Edit_Update_Tracking(" + CODList[i].Order_ID + ")' ><span class='glyphicon glyphicon-edit'></span> Update Tracking </a>" + "</td>" +
+                        "<td class='center'>" + "<a href='#' class='btn btn-success' data-toggle='modal' data-target='#Modal_Load_Ordered_Items' onclick='Load_Items_In_Customer_Order(" + CODList[i].Order_ID + ", \"" + CODList[i].Paymet_Type + "\")' >" + "<span class='glyphicon glyphicon-edit'></span> View Items </a>" + "</td>"
                         "</tr>";
 
                     SetData.append(Data);
@@ -91,16 +145,73 @@
         });
     }
 
+    function Load_Items_In_Customer_Order(orderId, paymentType) {
+        $.ajax({
+            type: "GET",
+            url: '/StoreHandler/GetOrderItems',
+            data: { orderId: orderId },
+            success: function (items) {
+                var itemContent = "<table class='table table-bordered'><thead><tr><th>Item Name</th><th>Quantity</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>";
+                var totalAmount = 0;
 
+                // Iterate over each item and calculate the total amount
+                for (var i = 0; i < items.length; i++) {
+                    var totalPrice = items[i].Quantity * items[i].Unit_price;
+                    totalAmount += totalPrice;
+
+                    itemContent += "<tr>" +
+                        "<td>" + items[i].ItemName + "</td>" +
+                        "<td>" + items[i].Quantity + "</td>" +
+                        "<td>" + items[i].Unit_price + "</td>" +
+                        "<td>" + totalPrice.toFixed(2) + "</td>" +
+                        "</tr>";
+                }
+
+                // Add shipping fee based on Payment_Type (COD or other)
+                var shippingFee = (paymentType === 'COD') ? 400 : 350;
+                totalAmount += shippingFee;
+
+                // Add shipping fee to the table display
+                itemContent += "<tr><td colspan='3' class='text-right'><strong>Shipping Fee:</strong></td><td>" + shippingFee.toFixed(2) + "</td></tr>";
+                itemContent += "<tr><td colspan='3' class='text-right'><strong>Total:</strong></td><td><strong>" + totalAmount.toFixed(2) + "</strong></td></tr></tbody></table>";
+
+                $('#orderItemsContent').html(itemContent);
+            },
+            error: function (error) {
+                $.notify(error);
+            }
+        });
+    }
+
+    function UpdateTracking() {
+
+        var orderId = $('#Order_ID').val();
+        var trackingNumber = $('#TrackingNumber').val();
+
+        $.ajax({
+            type: "POST",
+            url: '/StoreHandler/UpdateTrackingNumber',
+            data: { orderId: orderId, trackingNumber: trackingNumber },
+            success: function (response) {
+                if (response.success) {
+                    $.notify('Tracking number updated successfully!', { type: 'success' });
+                    $('#Modal_Update_Tracking').modal('hide');  // Close the modal
+                    // Optionally reload the data to reflect the change
+                    GetAll_Avaiting_COD_Load();  // Reload the orders table
+                } else {
+                    $.notify('Failed to update tracking number. Please try again.', { type: 'danger' });
+                }
+            },
+            error: function (error) {
+                $.notify(error);
+            }
+        });
+    }
+
+    function Edit_Update_Tracking(orderId) {
+        $('#Order_ID').val(orderId);  // Set the Order ID in the hidden field
+    }
 
 </script>
 
 
-@*<img id="itemImage" src="" style="width:200px;height:auto;" />
-
-    <script>
-        $(document).ready(function () {
-            var itemId = $('#Item_Code').val();
-            $("#itemImage").attr("src", "/StoreHandler/GetImage?itemId=" + itemId);
-        });
-    </script>*@

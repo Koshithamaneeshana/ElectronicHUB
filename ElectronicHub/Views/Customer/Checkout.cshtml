@@ -143,13 +143,17 @@
                 </div>
 
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label">City *</label>
                         <input type="text" class="form-control" id="city" required>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label">Postal Code *</label>
                         <input type="text" class="form-control" id="postal-code" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Phone *</label>
+                        <input type="text" class="form-control" id="Phone" required>
                     </div>
                 </div>
 
@@ -241,67 +245,9 @@
         $(document).ready(function () {
             updateCartCount();
             loadCart();
+            Load_Address();
         });
 
-
-        //function togglePayment(method) {
-        //    let baseTotal = parseFloat(document.getElementById("total-price").getAttribute("data-base-price"));
-        //    let totalPriceElement = document.getElementById("total-price");
-        //    let shippingCostElement = document.getElementById("shipping-cost");
-        //    let placeOrderBtn = document.getElementById("placeOrderBtn");
-        //    let errorMessageDiv = document.getElementById("error-message");
-
-        //    let newTotal = baseTotal; // Reset total price
-
-        //    if (method === "cod") {
-        //        newTotal += 400;
-        //        shippingCostElement.innerHTML = "<span class='fw-bold text-danger'>Rs.400</span>"; // Update shipping cost
-        //    } else if (method === "paypal") {
-        //        newTotal += 350;
-        //        shippingCostElement.innerHTML = "<span class='fw-bold text-success'>Free</span>"; // Keep shipping free
-        //    }
-
-        //    // Update total price
-        //    totalPriceElement.innerHTML = `Rs.${newTotal.toFixed(2)}`;
-
-        //    // Validate form fields before enabling the button
-        //    let requiredFields = ["first-name", "last-name", "street-address", "city", "postal-code", "email"];
-        //    let isValid = true;
-        //    let errorMessage = "<strong>Please fill out the required fields:</strong><ul class='mb-0'>";
-
-        //    requiredFields.forEach(function (field) {
-        //        let input = document.getElementById(field);
-        //        if (!input.value.trim()) {
-        //            isValid = false;
-        //            errorMessage += `<li>${input.previousElementSibling.innerText}</li>`;
-        //            input.classList.add("is-invalid"); // Highlight empty fields
-        //        } else {
-        //            input.classList.remove("is-invalid");
-        //        }
-        //    });
-
-        //    if (isValid) {
-        //        // Hide the error message if validation passes
-        //        errorMessageDiv.innerHTML = "";
-        //        errorMessageDiv.style.display = "none";
-
-        //        // Enable the Place Order button and remove lock icon
-        //        placeOrderBtn.removeAttribute("disabled");
-        //        placeOrderBtn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
-        //    } else {
-        //        // Show the beautiful Bootstrap alert message
-        //        errorMessage += "</ul>";
-        //        errorMessageDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-        //                                    ${errorMessage}
-        //                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        //                                </div>`;
-        //        errorMessageDiv.style.display = "block";
-
-        //        // Disable the button and add lock icon
-        //        placeOrderBtn.setAttribute("disabled", "true");
-        //        placeOrderBtn.innerHTML = '<i class="fas fa-lock"></i> Place Order';
-        //    }
-        //}
 
         function togglePayment(method) {
 
@@ -673,7 +619,7 @@
             if (paymentMethod === "cashOnDelivery") {
                 // Show confirmation message
                 let confirmCOD = confirm(`You will receive your order within 1-2 days.
-You have to pay COD amount: Rs.${totalAmount}. Are you sure you want to proceed with COD?`);
+                    You have to pay COD amount: Rs.${totalAmount}. Are you sure you want to proceed with COD?`);
 
                 if (confirmCOD) {
                     // Send AJAX request
@@ -689,7 +635,7 @@ You have to pay COD amount: Rs.${totalAmount}. Are you sure you want to proceed 
                         }),
                         success: function (response) {
                             alert("✅ Order placed successfully with Cash on Delivery!");
-                            //window.location.href = = '@Url.Action("Index", "Customer")';
+                            window.location.href = '@Url.Action("Index", "Customer")';
                         },
                         error: function () {
                             alert("❌ Failed to place order. Please try again.");
@@ -735,5 +681,28 @@ You have to pay COD amount: Rs.${totalAmount}. Are you sure you want to proceed 
 
             return cartItemsExtracted;
         }
+
+
+        //Address Load
+
+        function Load_Address() {
+            // Load User Profile
+            $.ajax({
+                url: "/Customer/GetUserProfile",
+                type: "GET",
+                success: function (data) {
+                    if (data.success) {
+                        $("#first-name").val(data.user.FirstName);
+                        $("#last-name").val(data.user.LastName);
+                        $("#email").val(data.user.Email);
+                        $("#street-address").val(data.user.StreetAddress);
+                        $("#city").val(data.user.City);
+                        $("#postal-code").val(data.user.PostalCode);
+                        $("#Phone").val(data.user.Phone);
+                    }
+                }
+            });
+        }
+
 
     </script>

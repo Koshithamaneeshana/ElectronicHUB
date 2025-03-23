@@ -24,6 +24,11 @@ namespace ElectronicHub.Controllers
             return View();
         }
 
+        public ActionResult Register()
+        {
+            return View();
+        }
+
         public ActionResult Login(User user)
         {
             try
@@ -44,9 +49,9 @@ namespace ElectronicHub.Controllers
                     try
                     {
                         Session["username"] = user.Username.ToString();
-                        Session["role"] = sdr[6].ToString();
-                        Session["Name"] = sdr[5].ToString();
-                        Session["UserId"] = sdr[1].ToString();
+                        Session["role"] = sdr[5].ToString();
+                        Session["Name"] = sdr[4].ToString();
+                        Session["UserId"] = sdr[0].ToString();
 
                         if (Session["role"].ToString() == "1")
                         {

@@ -1,0 +1,96 @@
+﻿
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+
+</head>
+<body>
+
+    <style>
+        table {
+            width: 100%; /* Optional */
+            border-collapse: collapse; /* Optional for cleaner table */
+        }
+
+        th, td {
+            text-align: center;
+            vertical-align: middle; /* Ensures text is vertically centered */
+            padding: 8px; /* Adds padding for better spacing */
+        }
+    </style>
+
+    <div>
+        <div class="col-md-12">
+            <div>
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Completed Shipment COD</h3>
+                        <input type="text" class="form-control pull-right" id="dev-table-filter" data-action="filter" data-filters="#table_Completed_COD_Data" placeholder="Filter" />
+                    </div>
+                    <table class="table table-hover" id="table_Completed_COD_Data">
+                        <thead>
+                            <tr>
+                                <th class="center">Order ID</th>
+                                <th class="center">User ID</th>
+                                <th class="center">Addres</th>
+                                <th class="center">Status</th>
+                                <th class="center">Date</th>
+                                <th class="center">Sub_Total]</th>
+                                <th class="center">Paymet_Type</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <br /><br />
+
+</body>
+
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+
+    GetAll_Completed_COD_Load();
+
+    function GetAll_Completed_COD_Load() {
+        $.ajax({
+            type: "GET",
+            url: '/StoreHandler/GetAll_Completed_COD_Load',
+            success: function (CODList) {
+                $("#table_Completed_COD_Data tbody").empty();
+                var SetData = $("#table_Completed_COD_Data tbody");
+                for (var i = 0; i < CODList.length; i++) {
+                    var Data = "<tr class='row_" + CODList[i].Order_ID + "'>" +
+                        "<td style='background-color: green;'>" + CODList[i].Order_ID + "</td>" +
+                        "<td style='background-color: green;'>" + CODList[i].UserId + "</td>" +
+                        "<td style='background-color: green;'>" + CODList[i].Address + "</td>" +
+                        "<td style='background-color: green;'>" + CODList[i].Status + "</td>" +
+                        "<td style='background-color: green;'>" + CODList[i].Date + "</td>" +
+                        "<td style='background-color: green;'>" + CODList[i].Sub_Total + "</td>" +
+                        "<td style='background-color: green;'>" + CODList[i].Paymet_Type + "</td>" +
+                        "</tr>";
+
+                    SetData.append(Data);
+                }
+            },
+            error: function (error) {
+                $.notify(error);
+            }
+        });
+    }
+
+
+</script>
+
+

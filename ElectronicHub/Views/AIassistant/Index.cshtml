@@ -1,7 +1,403 @@
-﻿
-@{
-    ViewBag.Title = "Index";
-}
+﻿@*<button id="openChat">Chat with AI</button>
+    <div id="chatWindow" style="display:none; border: 1px solid #ccc; padding: 10px;">
+        <div id="chatMessages"></div>
+        <input type="text" id="userInput" placeholder="Ask about products..." />
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="loadPreviousChats()">Show Previous Chats</button>
+    </div>*@
 
-<h2>Index</h2>
+<!-- Floating Chat Button -->
+<button id="openChat">💬 Chat with AI</button>
+
+<!-- Chat Window -->
+<div id="chatWindow">
+    <div class="chat-header">
+        <span>Chat with AI 🤖</span>
+        <button id="closeChat">✖</button>
+    </div>
+    <div id="chatMessages"></div>
+    <div class="chat-footer">
+        <input type="text" id="userInput" placeholder="Ask about products..." onkeypress="handleKeyPress(event)" />
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="loadPreviousChats()">📜 Show Previous Chats</button>
+    </div>
+</div>
+
+<style>
+    /* Floating Chat Button */
+    #openChat {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+    }
+
+        #openChat:hover {
+            background: #0056b3;
+        }
+
+    /* Chat Window */
+    #chatWindow {
+        display: none;
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 350px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* Chat Header */
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #007bff;
+        color: white;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    /* Close Button */
+    #closeChat {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    /* Chat Messages */
+    #chatMessages {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 10px;
+        background: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Messages */
+    .message {
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 75%;
+        word-wrap: break-word;
+        font-size: 14px;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .user {
+        align-self: flex-end;
+        background: #007bff;
+        color: white;
+    }
+
+    .ai {
+        align-self: flex-start;
+        background: #e5e5e5;
+        color: black;
+    }
+
+    /* Chat Footer */
+    .chat-footer {
+        display: flex;
+        padding: 10px;
+        background: white;
+        border-top: 1px solid #ddd;
+    }
+
+    /* Input Field */
+    #userInput {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    /* Buttons */
+    .chat-footer button {
+        margin-left: 5px;
+        padding: 10px;
+        background: #007bff;
+        border: none;
+        color: white;
+        font-size: 14px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .chat-footer button:hover {
+            background: #0056b3;
+        }
+
+    /* Scrollbar */
+    #chatMessages::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #chatMessages::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 3px;
+    }
+
+    /* Fade-in Animation */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #chatMessages {
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-bubble {
+        max-width: 75%;
+        padding: 10px;
+        border-radius: 15px;
+        margin: 5px 10px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .user-bubble {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-end;
+        text-align: right;
+    }
+
+    .ai-bubble {
+        background-color: #f1f1f1;
+        color: black;
+        align-self: flex-start;
+    }
+
+    .error-bubble {
+        background-color: #ffcccc;
+        color: #900;
+        text-align: center;
+    }
+
+    .no-chats {
+        text-align: center;
+        color: gray;
+    }
+
+</style>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@*<script>
+        $(document).ready(function () {
+            $("#openChat").click(function () {
+                $("#chatWindow").toggle();
+            });
+
+            // Load previous chats on page load
+            loadPreviousChats();
+        });
+
+        function sendMessage() {
+            var message = $("#userInput").val();
+            if (!message) return;
+
+            $("#chatMessages").append("<div><strong>User:</strong> " + message + "</div>");
+
+            $.ajax({
+                type: "POST",
+                url: "/AIassistant/GetResponse",
+                data: JSON.stringify({ Message: message }),
+                contentType: "application/json",
+                success: function (response) {
+                    $("#chatMessages").append("<div><strong>AI:</strong> " + response + "</div>");
+                    $("#userInput").val(""); // Clear input
+                },
+                error: function () {
+                    $("#chatMessages").append("<div>Error fetching AI response.</div>");
+                }
+            });
+        }
+
+        function loadPreviousChats() {
+            $.get("/AIassistant/GetPreviousChats", function (chats) {
+                $("#chatMessages").empty();
+                if (chats.length === 0) {
+                    $("#chatMessages").append("<div>No previous chats found.</div>");
+                } else {
+                    chats.forEach(chat => {
+                        $("#chatMessages").append(`<div><strong>User:</strong> ${chat.UserMessage}<br><strong>AI:</strong> ${chat.AIResponse}</div><hr>`);
+                    });
+                }
+            });
+        }
+    </script>*@
+
+<script>
+    //document.getElementById("openChat").addEventListener("click", function () {
+    //    document.getElementById("chatWindow").style.display = "block";
+    //});
+
+    //document.getElementById("closeChat").addEventListener("click", function () {
+    //    document.getElementById("chatWindow").style.display = "none";
+    //});
+
+    //function sendMessage() {
+    //    let userMessage = document.getElementById("userInput").value.trim();
+    //    if (!userMessage) return;
+
+    //    let chatBox = document.getElementById("chatMessages");
+
+    //    // Append User Message
+    //    let userMsgElement = document.createElement("div");
+    //    userMsgElement.classList.add("message", "user");
+    //    userMsgElement.textContent = userMessage;
+    //    chatBox.appendChild(userMsgElement);
+    //    document.getElementById("userInput").value = "";
+    //    scrollToBottom();
+
+    //    // Simulating AI Response
+    //    setTimeout(() => {
+    //        let aiMsgElement = document.createElement("div");
+    //        aiMsgElement.classList.add("message", "ai");
+    //        aiMsgElement.textContent = "I'm here to help with your products! 😊";
+    //        chatBox.appendChild(aiMsgElement);
+    //        scrollToBottom();
+    //    }, 500);
+    //}
+
+    //function handleKeyPress(event) {
+    //    if (event.key === "Enter") {
+    //        sendMessage();
+    //    }
+    //}
+
+    //function loadPreviousChats() {
+    //    let chatBox = document.getElementById("chatMessages");
+
+    //    let prevChat = document.createElement("div");
+    //    prevChat.classList.add("message", "ai");
+    //    prevChat.textContent = "Previous chat loaded! 📜";
+    //    chatBox.appendChild(prevChat);
+    //    scrollToBottom();
+    //}
+
+    //function scrollToBottom() {
+    //    let chatBox = document.getElementById("chatMessages");
+    //    chatBox.scrollTop = chatBox.scrollHeight;
+    //}
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("openChat").addEventListener("click", function () {
+            let chatWindow = document.getElementById("chatWindow");
+            chatWindow.style.display = chatWindow.style.display === "block" ? "none" : "block";
+            loadPreviousChats(); // Load previous chats when opening the chat
+        });
+
+        document.getElementById("closeChat").addEventListener("click", function () {
+            document.getElementById("chatWindow").style.display = "none";
+        });
+
+        document.getElementById("userInput").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+    });
+
+    function sendMessage() {
+        let userMessage = document.getElementById("userInput").value.trim();
+        if (!userMessage) return;
+
+        let chatBox = document.getElementById("chatMessages");
+
+        // Append User Message
+        let userMsgElement = document.createElement("div");
+        userMsgElement.classList.add("message", "user");
+        userMsgElement.innerHTML = `<strong>User:</strong> ${userMessage}`;
+        chatBox.appendChild(userMsgElement);
+        document.getElementById("userInput").value = "";
+        scrollToBottom();
+
+        // Send to backend and fetch AI response
+        fetch("/AIassistant/GetResponse", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ Message: userMessage }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                let aiMsgElement = document.createElement("div");
+                aiMsgElement.classList.add("message", "ai");
+                aiMsgElement.innerHTML = `<strong>AI:</strong> ${data}`;
+                chatBox.appendChild(aiMsgElement);
+                scrollToBottom();
+            })
+            .catch(() => {
+                chatBox.innerHTML += "<div class='error'>Error fetching AI response.</div>";
+            });
+    }
+
+    function scrollToBottom() {
+        let chatBox = document.getElementById("chatMessages");
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function loadPreviousChats() {
+        fetch("/AIassistant/GetPreviousChats")
+            .then(response => response.json())
+            .then(chats => {
+                let chatBox = document.getElementById("chatMessages");
+                chatBox.innerHTML = ""; // Clear previous messages
+                if (chats.length === 0) {
+                    chatBox.innerHTML = "<div class='no-chats'>No previous chats found.</div>";
+                } else {
+                    chats.forEach(chat => {
+                        let userMsgElement = document.createElement("div");
+                        userMsgElement.classList.add("chat-bubble", "user-bubble");
+                        userMsgElement.innerHTML = `<strong>You:</strong> ${chat.UserMessage}`;
+                        chatBox.appendChild(userMsgElement);
+
+                        let aiMsgElement = document.createElement("div");
+                        aiMsgElement.classList.add("chat-bubble", "ai-bubble");
+                        aiMsgElement.innerHTML = `<strong>AI:</strong> ${chat.AIResponse}`;
+                        chatBox.appendChild(aiMsgElement);
+                    });
+                }
+                scrollToBottom();
+            })
+            .catch(() => {
+                document.getElementById("chatMessages").innerHTML = "<div class='error-bubble'>Failed to load previous chats.</div>";
+            });
+    }
+
+</script>
+
+
+
 

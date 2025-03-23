@@ -1,110 +1,101 @@
 ﻿
-    <div class="row">
-        <div class="col-xl-3 col-md-3">
-            <div class="card bg-primary text-white mb-4">
-                <div class="card-body" style="font-size:18px">Awaiting Training <span id="Shedule_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="@Url.Action("AwaitingTraining", "SectionEngineer")">View</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-3">
-            <div class="card bg-warning text-white mb-4">
-                <div class="card-body" style="font-size:18px">Assigned for Training<span id="Fabrication_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="@Url.Action("AssignedTraining", "SectionEngineer")">View</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-3">
-            <div class="card bg-success text-white mb-4">
-                <div class="card-body" style="font-size:18px">Completed Training<span id="Preventive_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="@Url.Action("CompletedTraining", "SectionEngineer")">View</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-3">
-            <div class="card bg-danger text-white mb-4">
-                <div class="card-body" style="font-size:18px">Skill Matrix Dashboard <span id="BreakeDown_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span> </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="@Url.Action("Metrix_Dashboard", "SectionEngineer")">View</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
-                </div>
+<div class="row">
+    <div class="col-xl-3 col-md-3">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body" style="font-size:18px">Store Products <span id="Shedule_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="@Url.Action("Index", "Admin")">View</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <div style=" display: flex;">
-                        <i class="fas fa-chart-area me-1"></i>
-                        Monthly Assigned Trannings
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="chart_Monthly_Assigned_Tranning_by_Line" width="100%" height="40"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <div style=" display: flex;">
-                        <i class="fas fa-chart-bar me-1"></i>
-                        Trainings Progress
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="div_Status_Trannings_PieChart_by_Line" width="100%" height="40"></div>
-                </div>
+    <div class="col-xl-3 col-md-3">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-body" style="font-size:18px">Awaiting Shipments <span id="AwaitingShipment_Count" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="@Url.Action("AwaitingShipment", "Admin")">View</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <div style=" display: flex;">
-                        <i class="fas fa-chart-bar me-1"></i>
-                        Need to Add
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="chart_hightest_breakdown_month_by_Line" width="100%" height="40"></div>
-                </div>
+    <div class="col-xl-3 col-md-3">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-body" style="font-size:18px">Shipped Orders <span id="CompletedShipment_Count" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span></div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="@Url.Action("CompletedShipment", "Admin")">View</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
             </div>
         </div>
-        <div class="col-xl-6">
-            <div class="card mb-5">
-                <div class="card-header">
-                    <div style=" display: flex; margin-left:0px;">
-                        <i class="fas fa-chart-bar me-1"></i>
-                        Need to Add
-                    </div>
+    </div>
+    <div class="col-xl-3 col-md-3">
+        <div class="card bg-danger text-white mb-4">
+            <div class="card-body" style="font-size:18px">Item Category<span id="BreakeDown_Count_In_Line_Sup" style="position: absolute;right: 15px;top: 0px;font-size: 32px; font-style:italic; display: block;"></span> </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="@Url.Action("Category", "Admin")">View</a>
+                <div class="small text-white"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <div style=" display: flex;">
+                    <i class="fas fa-chart-area me-1"></i>
+                    Monthly Wise Sales
+                    <a class="form-control" style="width:10%;margin-left:75% ; width:45px" id="download_link_hightest_breakdown_area" href="/" download><i class="fa fa-download" aria-hidden="true"></i></a>
                 </div>
-                <div class="card-body"><div id="chart_total_maintenanace_jobs_by_Line" width="100%" height="40"></div></div>
+            </div>
+            <div class="card-body">
+                <div id="chart_Monthly_Wise_Sales" width="100%" height="40"></div>
             </div>
         </div>
     </div>
 
+    <div class="col-xl-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <div style=" display: flex;">
+                    <i class="fas fa-chart-bar me-1"></i>
+                    Orders Status
+                    <a class="form-control" style="width:10%;margin-left:75% ; width:45px" id="download_link_hightest_breakdown_area" href="/" download><i class="fa fa-download" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="div_Orders_Status" width="100%" height="40"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card mb-5">
+            <div class="card-header">
+                <div style=" display: flex; margin-left:0px;">
+                    <i class="fas fa-chart-bar me-1"></i>
+                    Item Wise Stocks
+                    <a class="form-control" style=" width:10%;margin-left:85% ;width:45px" id="download_link_total_maintenanace_jobs" href="/" download><i class="fa fa-download" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <div class="card-body"><div id="chart_Item_Wise_Stocks" width="100%" height="40"></div></div>
+        </div>
+    </div>
+</div>
 
-<script type="text/javascript" src="~/Scripts/loader.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
+
 
     google.charts.load('current', {
         packages: ['corechart'],
     }).then(function () {
 
-        //Status Pie Chart
+        //Count Pie Chart Shipped
         $.ajax({
             type: "POST",
-            url: "/Chart/Status_Trannings_PieChart_By_Line",
+            url: "/Admin/Orders_Status",
             data: '{}',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -136,7 +127,7 @@
                     }
                 };
 
-                var chart = new google.visualization.PieChart(document.getElementById('div_Status_Trannings_PieChart_by_Line'));
+                var chart = new google.visualization.PieChart(document.getElementById('div_Orders_Status'));
 
                 chart.draw(data, options);
 
@@ -150,10 +141,10 @@
             }
         });
 
-        //Monthly Wise assigned Tranning
+        //Monthly Wise Orders Revenue
         $.ajax({
             type: "POST",
-            url: "/Chart/Monthly_Assigned_Tranning_by_Line",
+            url: "/Admin/Monthly_Wise_Sales",
             data: '{}',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -191,15 +182,76 @@
                     annotations: {
                         alwaysOutside: true
                     },
-                    title: 'Monthly Tranning Progress',
+                    title: 'Monthly Wise Sales',
                     'height': 300,
                     legend: { position: 'top' },
                     'chartArea': { 'width': '90%' },
                     colors: ['purple'],
                 };
 
-                var chart = new google.visualization.ColumnChart(document.getElementById('chart_Monthly_Assigned_Tranning_by_Line'));
+                var chart = new google.visualization.ColumnChart(document.getElementById('chart_Monthly_Wise_Sales'));
 
+
+                chart.draw(view, options);
+
+            },
+            failure: function (r) {
+                $.notify("Session TimeOut Please Log Again...!!", "error");
+            },
+            error: function (r) {
+                $.notify("Session TimeOut Please Log Again...!!", "error");
+            }
+        });
+
+        //Item Wise Quantity
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Item_Wise_Quantity",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+
+            success: function (jsonData) {
+                // alert(jsonData);
+
+                var data = google.visualization.arrayToDataTable(jsonData);
+
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{ column: 0, modifier: function () { return 'total' }, type: 'string' }],
+                    [{ column: 1, aggregation: google.visualization.data.sum, type: 'number' }]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: 'short'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                        var percent = (dt.getValue(row, 1));
+                        return percent;
+                    },
+                    type: 'number',
+                    role: 'annotation'
+                }]);
+
+                var options = {
+                    annotations: {
+                        alwaysOutside: true
+                    },
+                    title: 'Monthly Wise Sales',
+                    'height': 300,
+                    legend: { position: 'top' },
+                    'chartArea': { 'width': '90%' },
+                    colors: ['green'],
+                };
+
+                var chart = new google.visualization.ColumnChart(document.getElementById('chart_Item_Wise_Stocks'));
 
                 chart.draw(view, options);
 
@@ -214,30 +266,48 @@
 
     });
 
-    window.addEventListener('DOMContentLoaded', event => {
-        document.body.classList.toggle('sb-sidenav-toggled');
-        // Toggle the side navigation
-        const sidebarToggle = document.body.querySelector('#sidebarToggle');
-        if (sidebarToggle) {
-            // Uncomment Below to persist sidebar toggle between refreshes
-            // if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
-            //     document.body.classList.toggle('sb-sidenav-toggled');
-            // }
-            sidebarToggle.addEventListener('click', event => {
-                event.preventDefault();
-                document.body.classList.toggle('sb-sidenav-toggled');
-                localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
+        $(document).ready(function () {
+            //Get Count Breakdown Pending Count By Location
+            //Preventive
+            $.ajax({
+                type: 'POST',
+                url: '/StoreHandler/AwaitingShipmentCount',
+                data: '{}',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+
+                success: function (jsonData) {
+                    document.getElementById('AwaitingShipment_Count').innerHTML = jsonData;
+
+                },
+                failure: function (r) {
+                    alert(r);
+                },
+                error: function (r) {
+                    alert(r);
+                }
             });
-        }
+        //Shedule
+        $.ajax({
+            type: 'POST',
+        url: '/StoreHandler/CompletedShipmentCount',
+        data: '{}',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+
+        success: function (jsonData) {
+            document.getElementById('CompletedShipment_Count').innerHTML = jsonData;
+
+            },
+        failure: function (r) {
+            alert(r);
+            },
+        error: function (r) {
+            alert(r);
+            }
+        });
 
     });
 
-    $(document).ready(function () {
-        $(".dropdown-toggle").dropdown();
-    });
 </script>
-
-
-
-
 
