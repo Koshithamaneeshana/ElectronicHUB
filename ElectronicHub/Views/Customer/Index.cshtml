@@ -882,6 +882,49 @@
         });
     }
 
+    //function ViewProduct(productId) {
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/Customer/GetAll_Products_Details",
+    //        data: JSON.stringify({ productId: productId }),
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        success: function (data) {
+    //            var obj = data[0]; // Extract first object from JSON array
+
+    //            // Set text fields
+    //            $("#itemName").text(obj.ItemName);
+    //            $("#itemQuantity").text(obj.ItemQuantity);
+    //            $("#itemPrice").text(obj.Item_Price);
+    //            $("#itemDescription").text(obj.Item_Description);
+
+    //            // Handle images dynamically
+    //            var carouselInner = $("#carouselInner");
+    //            carouselInner.empty(); // Clear previous images
+
+    //            var images = [obj.Item_Image1]; // Start with Item_Image1
+    //            if (obj.Item_Image2) images.push(obj.Item_Image2);
+    //            if (obj.Item_Image3) images.push(obj.Item_Image3);
+
+    //            // Generate carousel items dynamically
+    //            images.forEach((img, index) => {
+    //                var activeClass = index === 0 ? "active" : "";
+    //                carouselInner.append(`
+    //                <div class="carousel-item ${activeClass}">
+    //                    <img src="${img}" class="d-block w-100" style="max-height: 400px; object-fit: contain;" alt="Product Image">
+    //                </div>
+    //            `);
+    //            });
+
+    //            $("#Modal_View_Items_Details").modal("show"); // Open modal
+    //        },
+    //        error: function () {
+    //            alert("Failed to load product details.");
+    //        }
+    //    });
+    //}
+
+
     // Function to Generate Star Rating
     function getStars(rating) {
         let stars = "";

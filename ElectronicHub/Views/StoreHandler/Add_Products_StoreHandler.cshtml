@@ -71,26 +71,111 @@
 <script src="~/Content/Jquery/3.5.1/jquery.min.js"></script>
 <script>
 
+    //function AddItemData() {
+
+    //    var formData = new FormData();
+
+    //    formData.append("ItemID", $('#Item_Code').val());
+    //    formData.append("ItemName", $('#Item_Name').val());
+    //    formData.append("ItemQuantity", $('#Item_Qty').val());
+    //    formData.append("Item_Price", $('#Item_Price').val());
+    //    formData.append("Item_Description", $('#Item_Description').val());
+    //    formData.append("Item_Stock_limit", $('#Item_Stock_limit').val());
+
+    //    // Append images correctly
+    //    var file1 = $('#Item_Picture01')[0].files[0];
+    //    var file2 = $('#Item_Picture02')[0].files[0];
+    //    var file3 = $('#Item_Picture03')[0].files[0];
+
+    //    if (file1) formData.append("ImageFile1", file1);
+    //    if (file2) formData.append("ImageFile2", file2);
+    //    if (file3) formData.append("ImageFile3", file3);
+
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/StoreHandler/AddItemData",
+    //        data: formData,
+    //        processData: false,
+    //        contentType: false,
+    //        success: function (response) {
+    //            if (response.success) {
+    //                alert(response.message);
+    //                location.reload();
+    //            } else {
+    //                alert("Error: " + response.message);
+    //            }
+    //        },
+    //        error: function () {
+    //            alert("Error while saving data.");
+    //        }
+    //    });
+    //}
+
+
     function AddItemData() {
+        // Clear previous errors
+        $(".error-message").remove();
 
+        let isValid = true;
+
+        // Get input values
+        let itemID = $('#Item_Code').val().trim();
+        let itemName = $('#Item_Name').val().trim();
+        let itemQty = $('#Item_Qty').val().trim();
+        let itemPrice = $('#Item_Price').val().trim();
+        let itemDesc = $('#Item_Description').val().trim();
+        let itemStockLimit = $('#Item_Stock_limit').val().trim();
+
+        // Regular expressions for validation
+        let numberRegex = /^[0-9]+$/;
+        let priceRegex = /^[0-9]+(\.[0-9]{1,2})?$/; // Allows decimals
+
+        // Validation checks
+        if (itemID === "") {
+            showError("#Item_Code", "Item Code is required.");
+            isValid = false;
+        }
+
+        if (itemName === "") {
+            showError("#Item_Name", "Item Name is required.");
+            isValid = false;
+        }
+
+        if (itemQty === "" || !numberRegex.test(itemQty) || parseInt(itemQty) <= 0) {
+            showError("#Item_Qty", "Enter a valid positive quantity.");
+            isValid = false;
+        }
+
+        if (itemPrice === "" || !priceRegex.test(itemPrice) || parseFloat(itemPrice) <= 0) {
+            showError("#Item_Price", "Enter a valid positive price.");
+            isValid = false;
+        }
+
+        if (itemDesc === "") {
+            showError("#Item_Description", "Item Description is required.");
+            isValid = false;
+        }
+
+        if (itemStockLimit === "" || !numberRegex.test(itemStockLimit) || parseInt(itemStockLimit) <= 0) {
+            showError("#Item_Stock_limit", "Enter a valid positive stock limit.");
+            isValid = false;
+        }
+
+        // Stop if validation fails
+        if (!isValid) {
+            return;
+        }
+
+        // Prepare form data
         var formData = new FormData();
+        formData.append("ItemID", itemID);
+        formData.append("ItemName", itemName);
+        formData.append("ItemQuantity", itemQty);
+        formData.append("Item_Price", itemPrice);
+        formData.append("Item_Description", itemDesc);
+        formData.append("Item_Stock_limit", itemStockLimit);
 
-        formData.append("ItemID", $('#Item_Code').val());
-        formData.append("ItemName", $('#Item_Name').val());
-        formData.append("ItemQuantity", $('#Item_Qty').val());
-        formData.append("Item_Price", $('#Item_Price').val());
-        formData.append("Item_Description", $('#Item_Description').val());
-        formData.append("Item_Stock_limit", $('#Item_Stock_limit').val());
-
-        // Append images correctly
-        var file1 = $('#Item_Picture01')[0].files[0];
-        var file2 = $('#Item_Picture02')[0].files[0];
-        var file3 = $('#Item_Picture03')[0].files[0];
-
-        if (file1) formData.append("ImageFile1", file1);
-        if (file2) formData.append("ImageFile2", file2);
-        if (file3) formData.append("ImageFile3", file3);
-
+        // Send AJAX request
         $.ajax({
             type: "POST",
             url: "/StoreHandler/AddItemData",
@@ -110,5 +195,11 @@
             }
         });
     }
+
+    // Function to show error messages
+    function showError(selector, message) {
+        $(selector).after(`<span class='error-message' style='color: red;'>${message}</span>`);
+    }
+
 
 </script>
